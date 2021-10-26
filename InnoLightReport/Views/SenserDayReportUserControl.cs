@@ -82,7 +82,7 @@ namespace SunnineReport.Views
             #region 查詢按鈕
             SearchsimpleButton.Click += (s, e) =>
             {
-                if (StartdateEdit.DateTime < EnddateEdit.DateTime)
+                if (StartdateEdit.DateTime <= EnddateEdit.DateTime)
                 {
                     handle = SplashScreenManager.ShowOverlayForm(FindForm());
                     _Index = 0;

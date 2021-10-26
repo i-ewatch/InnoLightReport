@@ -172,13 +172,13 @@ namespace InnoLightReport.Views
                 }
                 for (int i = 0; i < DiskBoxeStr.Count; i++)
                 {
-                    DiskBoxeBand[i] = new GridBand() { Caption = DiskBoxeStr[i] };
+                    DiskBoxeBand[i] = new GridBand() { Caption = DiskBoxeStr[i], Width = 200 };
                 }
                 for (int i = 0; i < ElectricStr.Count; i++)
                 {
                     ElectricBand[i] = new GridBand() { Caption = ElectricStr[i] };
                     TotalBand[i] = new GridBand() { Caption = "累積量" };
-                    ElectricgridColumn[i] = new BandedGridColumn { Caption = "累積量",FieldName = $"Total{i}", Visible = true };
+                    ElectricgridColumn[i] = new BandedGridColumn { Caption = "累積量",FieldName = $"Total{i}", Visible = true,Width=200 };
                 }
                 view.Bands.Add(gridtime);
                 view.Bands.AddRange(AreagridBand);
@@ -196,21 +196,27 @@ namespace InnoLightReport.Views
                         AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
                         AreagridBand[i].Children.Add(DiskBoxeBand[DiskBoxe]);
                         DiskBoxe++;
-                    }
+                    }                
                 }
-                for (int i = 0; i < DiskBoxeStr.Count; i++)
+                for (int i = 0; i < AreaStr.Count; i++)
                 {
-                    foreach (var item in DeviceSetting.ElectricNames)
+                    for (int DisBoxIndex = 0; DisBoxIndex < DiskBoxeStr.Count; DisBoxIndex++)
                     {
-                        foreach (var DiskBoxesitem in item.DiskBoxes)
+                        foreach (var item in DeviceSetting.ElectricNames)
                         {
-                            if (DiskBoxesitem.Name == DiskBoxeStr[i])
+                            if (item.Name == AreaStr[i])
                             {
-                                for (int Index = 0; Index < DiskBoxesitem.DeviceName.Count; Index++)
+                                foreach (var DiskBoxesitem in item.DiskBoxes)
                                 {
-                                    DiskBoxeBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                                    DiskBoxeBand[i].Children.Add(ElectricBand[ElectricIndex]);
-                                    ElectricIndex++;
+                                    if (DiskBoxesitem.Name == DiskBoxeStr[DisBoxIndex])
+                                    {
+                                        for (int Index = 0; Index < DiskBoxesitem.DeviceName.Count; Index++)
+                                        {
+                                            DiskBoxeBand[DisBoxIndex].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                                            DiskBoxeBand[DisBoxIndex].Children.Add(ElectricBand[ElectricIndex]);
+                                            ElectricIndex++;
+                                        }
+                                    }
                                 }
                             }
                         }

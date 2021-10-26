@@ -101,7 +101,7 @@ namespace SunnineReport.Views
             #region 查詢按鈕
             SearchsimpleButton.Click += (s, e) =>
                 {
-                    if (StartdateEdit.DateTime < EnddateEdit.DateTime)
+                    if (StartdateEdit.DateTime <= EnddateEdit.DateTime)
                     {
                         handle = SplashScreenManager.ShowOverlayForm(FindForm());
                         DateTime StartTime = Convert.ToDateTime(StartdateEdit.DateTime.ToString("yyyy/MM/dd 00:00:00"));

@@ -37,7 +37,7 @@ namespace InnoLightReport.Views
             #region 查詢按鈕
             SearchsimpleButton.Click += (s, e) =>
             {
-                if (StartdateEdit.DateTime < EnddateEdit.DateTime)
+                if (StartdateEdit.DateTime <= EnddateEdit.DateTime)
                 {
                     handle = SplashScreenManager.ShowOverlayForm(FindForm());
                     DateTime StartTime = Convert.ToDateTime(StartdateEdit.DateTime.ToString("yyyy/MM/dd 00:00:00"));
@@ -120,9 +120,11 @@ namespace InnoLightReport.Views
                         KwhgridView.Columns["Area"].Caption = "區域";
                         KwhgridView.Columns["DiskBox"].Caption = "位置";
                         KwhgridView.Columns["TagNum"].Caption = "編號";
+                        KwhgridView.Columns["TagNum"].OptionsColumn.AllowMerge = DefaultBoolean.False;
                         KwhgridView.Columns["TagNum"].AppearanceCell.Options.UseTextOptions = true;
                         KwhgridView.Columns["TagNum"].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;
                         KwhgridView.Columns["NAME"].Caption = "迴路名稱";
+                        KwhgridView.Columns["NAME"].OptionsColumn.AllowMerge = DefaultBoolean.False;
                         KwhgridView.Columns["Min"].Caption = "起始電能";
                         KwhgridView.Columns["Min"].OptionsColumn.AllowMerge = DefaultBoolean.False;
                         KwhgridView.Columns["Min"].AppearanceCell.Options.UseTextOptions = true;
