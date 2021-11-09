@@ -63,13 +63,45 @@ namespace SunnineReport
         /// </summary>
         private KwhHourReportXtraUserControl KwhHourReportXtraUserControl { get; set; }
         /// <summary>
-        /// 感測器小時報表
+        /// 小時即時功率報表
+        /// </summary>
+        private KwHourReportUserControl KwHourReportUserControl { get; set; }
+        /// <summary>
+        /// 天即時功率報表
+        /// </summary>
+        private KwDayReportUserControl KwDayReportUserControl { get; set; }
+        /// <summary>
+        /// 小時電流報表
+        /// </summary>
+        private CurrentHourReportUserControl CurrentHourReportUserControl { get; set; }
+        /// <summary>
+        /// 天電流報表
+        /// </summary>
+        private CurrentDayReportUserControl CurrentDayReportUserControl { get; set; }
+        /// <summary>
+        /// 小時電壓報表
+        /// </summary>
+        private VoltageHourReportUserControl VoltageHourReportUserControl { get; set; }
+        /// <summary>
+        /// 天電壓報表
+        /// </summary>
+        private VoltageDayReportUserControl VoltageDayReportUserControl { get; set; }
+        /// <summary>
+        /// 冷凍冷藏小時報表
         /// </summary>
         private SenserHourReportUserControl SenserHourReportUserControl { get; set; }
         /// <summary>
-        /// 感測器日報表
+        /// 冷凍冷藏日報表
         /// </summary>
         private SenserDayReportUserControl SenserDayReportUserControl { get; set; }
+        /// <summary>
+        /// 空調小時報表
+        /// </summary>
+        private SenserHourReportUserControl ASenserHourReportUserControl { get; set; }
+        /// <summary>
+        /// 空調日報表
+        /// </summary>
+        private SenserDayReportUserControl ASenserDayReportUserControl { get; set; }
         #endregion
         public Form1()
         {
@@ -125,8 +157,8 @@ namespace SunnineReport
                 #endregion
 
                 #region 累積量報表
-                KwhDayReportUserControl = new KwhDayReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
-                NavigationFrame.AddPage(KwhDayReportUserControl);
+                //KwhDayReportUserControl = new KwhDayReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                //NavigationFrame.AddPage(KwhDayReportUserControl);
                 #endregion
                 #region 小時累積量報表
                 KwhHourReportXtraUserControl = new KwhHourReportXtraUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
@@ -136,13 +168,45 @@ namespace SunnineReport
                 KwhDayReportUserControl_V2 = new KwhDayReportUserControl_V2(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
                 NavigationFrame.AddPage(KwhDayReportUserControl_V2);
                 #endregion
-                #region 感測器小時報表
-                SenserHourReportUserControl = new SenserHourReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                #region 小時即時功率報表
+                KwHourReportUserControl = new KwHourReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(KwHourReportUserControl);
+                #endregion
+                #region 天即時功率報表
+                KwDayReportUserControl = new KwDayReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(KwDayReportUserControl);
+                #endregion
+                #region 小時電流報表
+                CurrentHourReportUserControl = new CurrentHourReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(CurrentHourReportUserControl);
+                #endregion
+                #region 天電流報表
+                CurrentDayReportUserControl = new CurrentDayReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(CurrentDayReportUserControl);
+                #endregion
+                #region 小時電壓報表
+                VoltageHourReportUserControl = new VoltageHourReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(VoltageHourReportUserControl);
+                #endregion
+                #region 天電壓報表
+                VoltageDayReportUserControl = new VoltageDayReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(VoltageDayReportUserControl);
+                #endregion
+                #region 冷凍冷藏小時報表
+                SenserHourReportUserControl = new SenserHourReportUserControl(MssqlMethod, DeviceSetting,0) { Dock = DockStyle.Fill };
                 NavigationFrame.AddPage(SenserHourReportUserControl);
                 #endregion
-                #region 感測器日報表
-                SenserDayReportUserControl = new SenserDayReportUserControl(MssqlMethod, DeviceSetting) { Dock = DockStyle.Fill };
+                #region 冷凍冷藏日報表
+                SenserDayReportUserControl = new SenserDayReportUserControl(MssqlMethod, DeviceSetting,0) { Dock = DockStyle.Fill };
                 NavigationFrame.AddPage(SenserDayReportUserControl);
+                #endregion
+                #region 空調小時報表
+                ASenserHourReportUserControl = new SenserHourReportUserControl(MssqlMethod, DeviceSetting, 1) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(ASenserHourReportUserControl);
+                #endregion
+                #region 空調日報表
+                ASenserDayReportUserControl = new SenserDayReportUserControl(MssqlMethod, DeviceSetting, 1) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(ASenserDayReportUserControl);
                 #endregion
             }
         }

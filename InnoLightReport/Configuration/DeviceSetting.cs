@@ -9,10 +9,27 @@ namespace SunnineReport.Configuration
         /// </summary>
         public List<Area> ElectricNames { get; set; } = new List<Area>();
         /// <summary>
-        /// 感測器名稱
+        /// 即時功率名稱
+        /// </summary>
+        public List<Area> KwNames { get; set; } = new List<Area>();
+        /// <summary>
+        /// 電表名稱
+        /// </summary>
+        public List<Area> CurrentNames { get; set; } = new List<Area>();
+        /// <summary>
+        /// 電表名稱
+        /// </summary>
+        public List<Area> VoltageNames { get; set; } = new List<Area>();
+        /// <summary>
+        /// 冷凍冷藏名稱
         /// </summary>
         public List<RTHDiskBox> SenserNames { get; set; } = new List<RTHDiskBox>();
+        /// <summary>
+        /// 空調名稱
+        /// </summary>
+        public List<RTHDiskBox> AirNames { get; set; } = new List<RTHDiskBox>();
     }
+    #region 累積量、平均電流、平均電壓
     /// <summary>
     /// 區域
     /// </summary>
@@ -35,9 +52,14 @@ namespace SunnineReport.Configuration
     public class DeviceName
     {
         public string Name { get; set; }
+        /// <summary>
+        /// 累積量
+        /// </summary>
         public string TagName { get; set; }
         public int TagNum { get; set; }
     }
+    #endregion
+    #region 溫濕度
     /// <summary>
     /// 盤名區域
     /// </summary>
@@ -55,4 +77,5 @@ namespace SunnineReport.Configuration
         public string TTagName { get; set; }
         public string HTagName { get; set; }
     }
+    #endregion
 }

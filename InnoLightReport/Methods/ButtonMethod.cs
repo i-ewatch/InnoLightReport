@@ -79,13 +79,13 @@ namespace SunnineReport.Methods
                                 /*設定字體*/
                                 Group.Appearance.Normal.FontStyleDelta = FontStyle.Bold;
                                 Group.Appearance.Normal.Name = "微軟正黑體";
-                                Group.Appearance.Normal.FontSizeDelta = 10;
+                                Group.Appearance.Normal.FontSizeDelta = 9;
                                 Group.Appearance.Hovered.FontStyleDelta = FontStyle.Bold;
                                 Group.Appearance.Hovered.Name = "微軟正黑體";
-                                Group.Appearance.Hovered.FontSizeDelta = 10;
+                                Group.Appearance.Hovered.FontSizeDelta = 9;
                                 Group.Appearance.Pressed.FontStyleDelta = FontStyle.Bold;
                                 Group.Appearance.Pressed.Name = "微軟正黑體";
-                                Group.Appearance.Pressed.FontSizeDelta = 10;
+                                Group.Appearance.Pressed.FontSizeDelta = 9;
                                 Group.Elements.AddRange(ButtonItem);//將列表加入至群組
                                 accordionControl1.Elements.Add(Group);//將群組加入至控制物件
                                                                       //
@@ -117,13 +117,13 @@ namespace SunnineReport.Methods
                                 };
                                 ButtonItem.Appearance.Normal.FontStyleDelta = FontStyle.Bold;
                                 ButtonItem.Appearance.Normal.Name = "微軟正黑體";
-                                ButtonItem.Appearance.Normal.FontSizeDelta = 8;
+                                ButtonItem.Appearance.Normal.FontSizeDelta = 6;
                                 ButtonItem.Appearance.Hovered.FontStyleDelta = FontStyle.Bold;
                                 ButtonItem.Appearance.Hovered.Name = "微軟正黑體";
-                                ButtonItem.Appearance.Hovered.FontSizeDelta = 8;
+                                ButtonItem.Appearance.Hovered.FontSizeDelta = 6;
                                 ButtonItem.Appearance.Pressed.FontStyleDelta = FontStyle.Bold;
                                 ButtonItem.Appearance.Pressed.Name = "微軟正黑體";
-                                ButtonItem.Appearance.Pressed.FontSizeDelta = 8;
+                                ButtonItem.Appearance.Pressed.FontSizeDelta = 6;
                                 accordionControl1.Elements.Add(ButtonItem);
                                 AccordionControlElements.Add(ButtonItem);
                             }

@@ -18,8 +18,9 @@ using System.Windows.Forms;
 
 namespace InnoLightReport.Views
 {
-    public partial class KwhHourReportXtraUserControl : Field4UserControl
+    public partial class CurrentHourReportUserControl :Field4UserControl
     {
+        #region 基本資訊
         /// <summary>
         /// 跳出迴圈旗標
         /// </summary>
@@ -63,16 +64,16 @@ namespace InnoLightReport.Views
         /// 區域名稱
         /// </summary>
         private List<string> AreaStr { get; set; } = new List<string>();
-        public KwhHourReportXtraUserControl(MssqlMethod method, DeviceSetting device)
+        #endregion
+        public CurrentHourReportUserControl(MssqlMethod method, DeviceSetting device)
         {
             InitializeComponent();
-
             DeviceSetting = device;
             MssqlMethod = method;
             #region 設備下拉選單
             if (DeviceSetting != null)
             {
-                foreach (var Systemitem in DeviceSetting.ElectricNames)
+                foreach (var Systemitem in DeviceSetting.CurrentNames)
                 {
                     DevicecheckedComboBoxEdit.Properties.Items.Add(Systemitem.Name, false);
                 }
@@ -87,7 +88,7 @@ namespace InnoLightReport.Views
                 ElectricStr = new List<string>();
                 Index = 0;
                 DateTime StartTime = Convert.ToDateTime(Convert.ToDateTime(StartdateEdit.EditValue).ToString("yyyy/MM/dd 00:00:00"));
-                DateTime EndTime = Convert.ToDateTime(Convert.ToDateTime(StartdateEdit.EditValue).ToString("yyyy/MM/dd 23:59:59"));
+                DateTime EndTime = Convert.ToDateTime(Convert.ToDateTime(EnddateEdit.EditValue).ToString("yyyy/MM/dd 23:59:59"));
                 string[] Device = DevicecheckedComboBoxEdit.Text.Split(',');
                 DataTable dataTable = new DataTable();
                 string sql = $"DECLARE @regTIme DATETIME, @startTime DATETIME, @endTime DATETIME " +
@@ -101,7 +102,7 @@ namespace InnoLightReport.Views
                              $"END ";
                 for (int i = 0; i < Device.Length; i++)
                 {
-                    foreach (var Areaitem in DeviceSetting.ElectricNames)
+                    foreach (var Areaitem in DeviceSetting.CurrentNames)
                     {
                         if (Areaitem.Name == Device[i].Trim())
                         {
@@ -109,7 +110,7 @@ namespace InnoLightReport.Views
                             {
                                 foreach (var item in DiskBoxeitem.DeviceName)
                                 {
-                                    sql = Select_Kwh(Index, sql, item, StartTime, EndTime);
+                                    sql = Select_Current(Index, sql, item, StartTime, EndTime);
                                     Index++;
                                     ElectricStr.Add(item.Name);
                                     var DiskBoxeData = DiskBoxeStr.SingleOrDefault(g => g == DiskBoxeitem.Name);
@@ -141,7 +142,7 @@ namespace InnoLightReport.Views
                     Log.Error(ex, "查詢小時累積量報表錯誤");
                     CloseProgressPanel(handle);
                 }
-                BandedGridView view = new BandedGridView(KwhgridControl);
+                BandedGridView view = new BandedGridView(CurrentgridControl);
                 view.MinBandPanelRowCount = 1; // Band欄位高度
                 //view.OptionsPrint.AutoWidth = false;//報表匯出不自動縮放長度
                 //view.OptionsPrint.PrintHeader = false;//不顯示Columns標頭
@@ -163,8 +164,12 @@ namespace InnoLightReport.Views
                 GridBand[] AreagridBand = new GridBand[AreaStr.Count];
                 GridBand[] DiskBoxeBand = new GridBand[DiskBoxeStr.Count];
                 GridBand[] ElectricBand = new GridBand[ElectricStr.Count];
-                GridBand[] TotalBand = new GridBand[ElectricStr.Count];
-                BandedGridColumn[] ElectricgridColumn = new BandedGridColumn[ElectricStr.Count];//累積量
+                GridBand[] G_MingridColumn = new GridBand[ElectricStr.Count];//最小值
+                GridBand[] G_MaxgridColumn = new GridBand[ElectricStr.Count];//最大值
+                GridBand[] G_AvggridColumn = new GridBand[ElectricStr.Count];//平均值
+                BandedGridColumn[] MingridColumn = new BandedGridColumn[ElectricStr.Count];//溫度最小值
+                BandedGridColumn[] MaxgridColumn = new BandedGridColumn[ElectricStr.Count];//溫度最大值
+                BandedGridColumn[] AvggridColumn = new BandedGridColumn[ElectricStr.Count];//溫度平均值
                 BandedGridColumn coltime = new BandedGridColumn() { Caption = "時間", FieldName = "Time", Visible = true, Width = 100 }; //建立Colum (時間)
                 for (int i = 0; i < AreaStr.Count; i++)
                 {
@@ -177,32 +182,36 @@ namespace InnoLightReport.Views
                 for (int i = 0; i < ElectricStr.Count; i++)
                 {
                     ElectricBand[i] = new GridBand() { Caption = ElectricStr[i] };
-                    TotalBand[i] = new GridBand() { Caption = "累積量" };
-                    ElectricgridColumn[i] = new BandedGridColumn { Caption = "累積量",FieldName = $"Total{i}", Visible = true,Width=200 };
+                    G_MingridColumn[i] = new GridBand() { Caption = "最小值" };
+                    G_MaxgridColumn[i] = new GridBand() { Caption = "最大值" };
+                    G_AvggridColumn[i] = new GridBand() { Caption = "平均值" };
+                    MingridColumn[i] = new BandedGridColumn() { Caption = "最小值", FieldName = $"Kwh{i}Min", Visible = true, Width = 200 };
+                    MaxgridColumn[i] = new BandedGridColumn() { Caption = "最大值", FieldName = $"Kwh{i}Max", Visible = true, Width = 200 };
+                    AvggridColumn[i] = new BandedGridColumn() { Caption = "平均值", FieldName = $"Kwh{i}Avg", Visible = true, Width = 200 };
                 }
                 view.Bands.Add(gridtime);
                 view.Bands.AddRange(AreagridBand);
-                KwhgridControl.DataSource = dataTable;
-                KwhgridControl.ViewCollection.Add(view);
-                KwhgridControl.MainView = view;
+                CurrentgridControl.DataSource = dataTable;
+                CurrentgridControl.ViewCollection.Add(view);
+                CurrentgridControl.MainView = view;
 
                 ElectricIndex = 0;
                 DiskBoxe = 0;
                 for (int i = 0; i < AreaStr.Count; i++)
                 {
-                    var Areadata = DeviceSetting.ElectricNames.SingleOrDefault(g => g.Name == AreaStr[i]);
+                    var Areadata = DeviceSetting.CurrentNames.SingleOrDefault(g => g.Name == AreaStr[i]);
                     for (int Index = 0; Index < Areadata.DiskBoxes.Count; Index++)
                     {
                         AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
                         AreagridBand[i].Children.Add(DiskBoxeBand[DiskBoxe]);
                         DiskBoxe++;
-                    }                
+                    }
                 }
                 for (int i = 0; i < AreaStr.Count; i++)
                 {
                     for (int DisBoxIndex = 0; DisBoxIndex < DiskBoxeStr.Count; DisBoxIndex++)
                     {
-                        foreach (var item in DeviceSetting.ElectricNames)
+                        foreach (var item in DeviceSetting.CurrentNames)
                         {
                             if (item.Name == AreaStr[i])
                             {
@@ -225,12 +234,18 @@ namespace InnoLightReport.Views
                 for (int i = 0; i < ElectricStr.Count; i++)
                 {
                     ElectricBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                    //ElectricBand[i].Children.Add(TotalBand[i]);
-                    ElectricBand[i].Columns.Add(ElectricgridColumn[i]);
-                    //TotalBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                    //TotalBand[i].Columns.Add(ElectricgridColumn[i]);
-                    ElectricgridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
-                    ElectricgridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
+                    ElectricBand[i].Children.Add(G_MingridColumn[i]);
+                    ElectricBand[i].Children.Add(G_MaxgridColumn[i]);
+                    ElectricBand[i].Children.Add(G_AvggridColumn[i]);
+                    G_MingridColumn[i].Columns.Add(MingridColumn[i]);
+                    G_MaxgridColumn[i].Columns.Add(MaxgridColumn[i]);
+                    G_AvggridColumn[i].Columns.Add(AvggridColumn[i]);
+                    MingridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                    MingridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
+                    MaxgridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                    MaxgridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
+                    AvggridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                    AvggridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
                 }
                 gridtime.Columns.Add(coltime);
                 view.OptionsCustomization.AllowChangeColumnParent = false;
@@ -240,7 +255,7 @@ namespace InnoLightReport.Views
             #region 匯出按鈕
             ExportsimpleButton.Click += (s, e) =>
             {
-                if (KwhgridControl.DataSource != null)
+                if (CurrentgridControl.DataSource != null)
                 {
                     XlsxExportOptionsEx options = new XlsxExportOptionsEx();
                     options.ShowColumnHeaders = DefaultBoolean.False;
@@ -251,7 +266,7 @@ namespace InnoLightReport.Views
                     saveFileDialog.DefaultExt = ".xlsx";
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        KwhgridView.ExportToXlsx($"{saveFileDialog.FileName}", options);
+                        CurrentgridView.ExportToXlsx($"{saveFileDialog.FileName}", options);
                     }
                 }
                 else
@@ -265,11 +280,11 @@ namespace InnoLightReport.Views
             };
             #endregion
         }
-        private string Select_Kwh(int i, string sql, DeviceName item, DateTime StartTime, DateTime EndTime)
+        private string Select_Current(int i, string sql, DeviceName item, DateTime StartTime, DateTime EndTime)
         {
-            sql += $"DECLARE @Kwh{i} AS TABLE ([Time] nvarchar(13), [Name] nvarchar(50), [Total] DECIMAL(18,2)) " +
-                   $"INSERT INTO @Kwh{i}  ([Time], [Name],[Total]) " +
-                   $"SELECT  convert(varchar(13),[Timestamp], 120)AS[Time], MAX(Name)AS[Name],(MAX(CAST([Value] AS DECIMAL(18,2))) - MIN(CAST([Value] AS DECIMAL(18,2)))) AS Total FROM [dbo].[Table_KWH] " +
+            sql += $"DECLARE @Kwh{i} AS TABLE ([Time] nvarchar(13), [Name] nvarchar(50), [Min] DECIMAL(18,2), [Max] DECIMAL(18,2), [Avg] DECIMAL(18,2))  " +
+                   $"INSERT INTO @Kwh{i}  ([Time], [Name],[Min],[Max],[Avg]) " +
+                   $"SELECT  convert(varchar(13),[Timestamp], 120)AS[Time], MAX(Name)AS[Name],MIN(CAST([Value] AS DECIMAL(18,2)))AS[Min],MAX(CAST([Value] AS DECIMAL(18,2)))AS[Max],AVG(CAST([Value] AS DECIMAL(18,2)))AS [Avg] FROM [dbo].[Table_I] " +
                    $"WHERE NAME = '{item.TagName}' " +
                    $"AND [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
                    $"GROUP BY convert(varchar(13),[Timestamp],120) " +
@@ -281,7 +296,9 @@ namespace InnoLightReport.Views
             sql += $" SELECT convert(VARCHAR(13),mainT.ttimen,120) AS [Time]";
             for (int i = 0; i < Index; i++)
             {
-                sql += $" ,Kwh{i}.[Total] AS [Total{i}]";
+                sql += $" ,Kwh{i}.[Min] AS [Kwh{i}Min]";
+                sql += $" ,Kwh{i}.[Max] AS [Kwh{i}Max]";
+                sql += $" ,Kwh{i}.[Avg] AS [Kwh{i}Avg]";
             }
             sql += " FROM @mainTemp AS mainT";
             for (int i = 0; i < Index; i++)

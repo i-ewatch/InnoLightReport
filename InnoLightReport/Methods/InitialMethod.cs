@@ -85,8 +85,80 @@ namespace SunnineReport.Methods
                                         {
                                             new DeviceName()
                                             {
-                                                Name ="電表1",
-                                                TagName ="電表1",
+                                                Name ="累積量",
+                                                TagName ="累積量",
+                                                TagNum = 1
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        },
+                        KwNames =
+                        {
+                            new Area()
+                            {
+                                Name = "空間名稱",
+                                DiskBoxes =
+                                {
+                                    new DiskBox()
+                                    {
+                                        Name ="盤箱名稱",
+                                        DeviceName =
+                                        {
+                                            new DeviceName()
+                                            {
+                                                Name ="即時功率",
+                                                TagName ="即時功率",
+                                                TagNum = 1
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        },
+                        CurrentNames =
+                        {
+                            new Area()
+                            {
+                                Name = "空間名稱",
+                                DiskBoxes =
+                                {
+                                    new DiskBox()
+                                    {
+                                        Name ="盤箱名稱",
+                                        DeviceName =
+                                        {
+                                            new DeviceName()
+                                            {
+                                                Name ="電流",
+                                                TagName ="電流",
+                                                TagNum = 1
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        },
+                        VoltageNames =
+                        {
+                            new Area()
+                            {
+                                Name = "空間名稱",
+                                DiskBoxes =
+                                {
+                                    new DiskBox()
+                                    {
+                                        Name ="盤箱名稱",
+                                        DeviceName =
+                                        {
+                                            new DeviceName()
+                                            {
+                                                Name ="電壓",
+                                                TagName ="電壓",
                                                 TagNum = 1
                                             }
                                         }
@@ -105,8 +177,8 @@ namespace SunnineReport.Methods
                                    new RTHDeviceName()
                                    {
                                        Name ="感測器1",
-                                       TTagName ="感測器1",
-                                       HTagName = "感測器1"
+                                       TTagName ="感測器",
+                                       HTagName = "感測器"
                                    }
                                }
                             }

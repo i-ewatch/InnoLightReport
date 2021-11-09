@@ -30,26 +30,28 @@ namespace SunnineReport.Views
         private void InitializeComponent()
         {
             this.BarpanelControl = new DevExpress.XtraEditors.PanelControl();
-            this.DevicecheckedComboBoxEdit = new DevExpress.XtraEditors.CheckedComboBoxEdit();
-            this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
-            this.EndtimeSpanEdit = new DevExpress.XtraEditors.TimeEdit();
-            this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
-            this.StarttimeSpanEdit = new DevExpress.XtraEditors.TimeEdit();
+            this.StarttimeSpanEdit = new DevExpress.XtraEditors.DateEdit();
             this.SearchsimpleButton = new DevExpress.XtraEditors.SimpleButton();
             this.ExportsimpleButton = new DevExpress.XtraEditors.SimpleButton();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
             this.GridpanelControl = new DevExpress.XtraEditors.PanelControl();
             this.SensergridControl = new DevExpress.XtraGrid.GridControl();
             this.SensergridView = new DevExpress.XtraGrid.Views.Grid.GridView();
+            this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
+            this.DevicecheckedComboBoxEdit = new DevExpress.XtraEditors.CheckedComboBoxEdit();
+            this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
+            this.EndtimeSpanEdit = new DevExpress.XtraEditors.DateEdit();
             ((System.ComponentModel.ISupportInitialize)(this.BarpanelControl)).BeginInit();
             this.BarpanelControl.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DevicecheckedComboBoxEdit.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EndtimeSpanEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StarttimeSpanEdit.Properties.CalendarTimeProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StarttimeSpanEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GridpanelControl)).BeginInit();
             this.GridpanelControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SensergridControl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SensergridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DevicecheckedComboBoxEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EndtimeSpanEdit.Properties.CalendarTimeProperties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EndtimeSpanEdit.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // BarpanelControl
@@ -69,65 +71,6 @@ namespace SunnineReport.Views
             this.BarpanelControl.Size = new System.Drawing.Size(1076, 38);
             this.BarpanelControl.TabIndex = 1;
             // 
-            // DevicecheckedComboBoxEdit
-            // 
-            this.DevicecheckedComboBoxEdit.Dock = System.Windows.Forms.DockStyle.Left;
-            this.DevicecheckedComboBoxEdit.EditValue = "";
-            this.DevicecheckedComboBoxEdit.Location = new System.Drawing.Point(544, 0);
-            this.DevicecheckedComboBoxEdit.Name = "DevicecheckedComboBoxEdit";
-            this.DevicecheckedComboBoxEdit.Properties.AllowFocused = false;
-            this.DevicecheckedComboBoxEdit.Properties.Appearance.Font = new System.Drawing.Font("微軟正黑體", 16F);
-            this.DevicecheckedComboBoxEdit.Properties.Appearance.Options.UseFont = true;
-            this.DevicecheckedComboBoxEdit.Properties.AppearanceDropDown.Font = new System.Drawing.Font("微軟正黑體", 16F);
-            this.DevicecheckedComboBoxEdit.Properties.AppearanceDropDown.Options.UseFont = true;
-            this.DevicecheckedComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.DevicecheckedComboBoxEdit.Size = new System.Drawing.Size(357, 34);
-            this.DevicecheckedComboBoxEdit.TabIndex = 27;
-            // 
-            // labelControl3
-            // 
-            this.labelControl3.Appearance.Font = new System.Drawing.Font("微軟正黑體", 18F);
-            this.labelControl3.Appearance.Options.UseFont = true;
-            this.labelControl3.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.labelControl3.Location = new System.Drawing.Point(470, 0);
-            this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Size = new System.Drawing.Size(74, 38);
-            this.labelControl3.TabIndex = 26;
-            this.labelControl3.Text = " 區域 :";
-            // 
-            // EndtimeSpanEdit
-            // 
-            this.EndtimeSpanEdit.Dock = System.Windows.Forms.DockStyle.Left;
-            this.EndtimeSpanEdit.EditValue = null;
-            this.EndtimeSpanEdit.Location = new System.Drawing.Point(289, 0);
-            this.EndtimeSpanEdit.Name = "EndtimeSpanEdit";
-            this.EndtimeSpanEdit.Properties.AllowFocused = false;
-            this.EndtimeSpanEdit.Properties.Appearance.Font = new System.Drawing.Font("微軟正黑體", 16F);
-            this.EndtimeSpanEdit.Properties.Appearance.Options.UseFont = true;
-            this.EndtimeSpanEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.EndtimeSpanEdit.Properties.EditValueChangedFiringMode = DevExpress.XtraEditors.Controls.EditValueChangedFiringMode.Default;
-            this.EndtimeSpanEdit.Properties.Mask.EditMask = "yyyy/MM/dd HH";
-            this.EndtimeSpanEdit.Properties.Mask.UseMaskAsDisplayFormat = true;
-            this.EndtimeSpanEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.EndtimeSpanEdit.Properties.TimeEditStyle = DevExpress.XtraEditors.Repository.TimeEditStyle.TouchUI;
-            this.EndtimeSpanEdit.Size = new System.Drawing.Size(181, 34);
-            this.EndtimeSpanEdit.TabIndex = 25;
-            // 
-            // labelControl2
-            // 
-            this.labelControl2.Appearance.Font = new System.Drawing.Font("微軟正黑體", 18F);
-            this.labelControl2.Appearance.Options.UseFont = true;
-            this.labelControl2.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.labelControl2.Location = new System.Drawing.Point(255, 0);
-            this.labelControl2.Name = "labelControl2";
-            this.labelControl2.Size = new System.Drawing.Size(34, 38);
-            this.labelControl2.TabIndex = 21;
-            this.labelControl2.Text = " ~";
-            // 
             // StarttimeSpanEdit
             // 
             this.StarttimeSpanEdit.Dock = System.Windows.Forms.DockStyle.Left;
@@ -139,13 +82,17 @@ namespace SunnineReport.Views
             this.StarttimeSpanEdit.Properties.Appearance.Options.UseFont = true;
             this.StarttimeSpanEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.StarttimeSpanEdit.Properties.EditValueChangedFiringMode = DevExpress.XtraEditors.Controls.EditValueChangedFiringMode.Default;
-            this.StarttimeSpanEdit.Properties.Mask.EditMask = "yyyy/MM/dd HH";
+            this.StarttimeSpanEdit.Properties.CalendarTimeProperties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.StarttimeSpanEdit.Properties.DisplayFormat.FormatString = "";
+            this.StarttimeSpanEdit.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            this.StarttimeSpanEdit.Properties.EditFormat.FormatString = "";
+            this.StarttimeSpanEdit.Properties.EditFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            this.StarttimeSpanEdit.Properties.Mask.EditMask = "yyyy/MM/dd";
             this.StarttimeSpanEdit.Properties.Mask.UseMaskAsDisplayFormat = true;
             this.StarttimeSpanEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            this.StarttimeSpanEdit.Properties.TimeEditStyle = DevExpress.XtraEditors.Repository.TimeEditStyle.TouchUI;
             this.StarttimeSpanEdit.Size = new System.Drawing.Size(181, 34);
-            this.StarttimeSpanEdit.TabIndex = 18;
+            this.StarttimeSpanEdit.TabIndex = 33;
             // 
             // SearchsimpleButton
             // 
@@ -214,6 +161,69 @@ namespace SunnineReport.Views
             this.SensergridView.Name = "SensergridView";
             this.SensergridView.OptionsView.ShowGroupPanel = false;
             // 
+            // labelControl2
+            // 
+            this.labelControl2.Appearance.Font = new System.Drawing.Font("微軟正黑體", 18F);
+            this.labelControl2.Appearance.Options.UseFont = true;
+            this.labelControl2.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
+            this.labelControl2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labelControl2.Location = new System.Drawing.Point(255, 0);
+            this.labelControl2.Name = "labelControl2";
+            this.labelControl2.Size = new System.Drawing.Size(34, 38);
+            this.labelControl2.TabIndex = 36;
+            this.labelControl2.Text = " ~";
+            // 
+            // DevicecheckedComboBoxEdit
+            // 
+            this.DevicecheckedComboBoxEdit.Dock = System.Windows.Forms.DockStyle.Left;
+            this.DevicecheckedComboBoxEdit.EditValue = "";
+            this.DevicecheckedComboBoxEdit.Location = new System.Drawing.Point(544, 0);
+            this.DevicecheckedComboBoxEdit.Name = "DevicecheckedComboBoxEdit";
+            this.DevicecheckedComboBoxEdit.Properties.AllowFocused = false;
+            this.DevicecheckedComboBoxEdit.Properties.Appearance.Font = new System.Drawing.Font("微軟正黑體", 16F);
+            this.DevicecheckedComboBoxEdit.Properties.Appearance.Options.UseFont = true;
+            this.DevicecheckedComboBoxEdit.Properties.AppearanceDropDown.Font = new System.Drawing.Font("微軟正黑體", 16F);
+            this.DevicecheckedComboBoxEdit.Properties.AppearanceDropDown.Options.UseFont = true;
+            this.DevicecheckedComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.DevicecheckedComboBoxEdit.Size = new System.Drawing.Size(357, 34);
+            this.DevicecheckedComboBoxEdit.TabIndex = 42;
+            // 
+            // labelControl3
+            // 
+            this.labelControl3.Appearance.Font = new System.Drawing.Font("微軟正黑體", 18F);
+            this.labelControl3.Appearance.Options.UseFont = true;
+            this.labelControl3.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
+            this.labelControl3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labelControl3.Location = new System.Drawing.Point(470, 0);
+            this.labelControl3.Name = "labelControl3";
+            this.labelControl3.Size = new System.Drawing.Size(74, 38);
+            this.labelControl3.TabIndex = 41;
+            this.labelControl3.Text = " 區域 :";
+            // 
+            // EndtimeSpanEdit
+            // 
+            this.EndtimeSpanEdit.Dock = System.Windows.Forms.DockStyle.Left;
+            this.EndtimeSpanEdit.EditValue = null;
+            this.EndtimeSpanEdit.Location = new System.Drawing.Point(289, 0);
+            this.EndtimeSpanEdit.Name = "EndtimeSpanEdit";
+            this.EndtimeSpanEdit.Properties.AllowFocused = false;
+            this.EndtimeSpanEdit.Properties.Appearance.Font = new System.Drawing.Font("微軟正黑體", 16F);
+            this.EndtimeSpanEdit.Properties.Appearance.Options.UseFont = true;
+            this.EndtimeSpanEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.EndtimeSpanEdit.Properties.CalendarTimeProperties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.EndtimeSpanEdit.Properties.DisplayFormat.FormatString = "";
+            this.EndtimeSpanEdit.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            this.EndtimeSpanEdit.Properties.EditFormat.FormatString = "";
+            this.EndtimeSpanEdit.Properties.EditFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            this.EndtimeSpanEdit.Properties.Mask.EditMask = "yyyy/MM/dd";
+            this.EndtimeSpanEdit.Properties.Mask.UseMaskAsDisplayFormat = true;
+            this.EndtimeSpanEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
+            this.EndtimeSpanEdit.Size = new System.Drawing.Size(181, 34);
+            this.EndtimeSpanEdit.TabIndex = 40;
+            // 
             // SenserHourReportUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -224,13 +234,15 @@ namespace SunnineReport.Views
             this.Size = new System.Drawing.Size(1076, 688);
             ((System.ComponentModel.ISupportInitialize)(this.BarpanelControl)).EndInit();
             this.BarpanelControl.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.DevicecheckedComboBoxEdit.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EndtimeSpanEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StarttimeSpanEdit.Properties.CalendarTimeProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StarttimeSpanEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GridpanelControl)).EndInit();
             this.GridpanelControl.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SensergridControl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SensergridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DevicecheckedComboBoxEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EndtimeSpanEdit.Properties.CalendarTimeProperties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EndtimeSpanEdit.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -239,16 +251,16 @@ namespace SunnineReport.Views
 
         private DevExpress.XtraEditors.PanelControl BarpanelControl;
         private DevExpress.XtraEditors.SimpleButton ExportsimpleButton;
-        private DevExpress.XtraEditors.LabelControl labelControl1;
         private DevExpress.XtraEditors.SimpleButton SearchsimpleButton;
-        private DevExpress.XtraEditors.TimeEdit StarttimeSpanEdit;
-        private DevExpress.XtraEditors.CheckedComboBoxEdit DevicecheckedComboBoxEdit;
-        private DevExpress.XtraEditors.LabelControl labelControl3;
-        private DevExpress.XtraEditors.TimeEdit EndtimeSpanEdit;
-        private DevExpress.XtraEditors.LabelControl labelControl2;
         private DevExpress.XtraGrid.Views.BandedGrid.BandedGridView bandedGridView1;
         private DevExpress.XtraEditors.PanelControl GridpanelControl;
         private DevExpress.XtraGrid.GridControl SensergridControl;
         private DevExpress.XtraGrid.Views.Grid.GridView SensergridView;
+        private DevExpress.XtraEditors.DateEdit StarttimeSpanEdit;
+        private DevExpress.XtraEditors.LabelControl labelControl1;
+        private DevExpress.XtraEditors.CheckedComboBoxEdit DevicecheckedComboBoxEdit;
+        private DevExpress.XtraEditors.LabelControl labelControl3;
+        private DevExpress.XtraEditors.DateEdit EndtimeSpanEdit;
+        private DevExpress.XtraEditors.LabelControl labelControl2;
     }
 }

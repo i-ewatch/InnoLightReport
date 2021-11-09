@@ -43,7 +43,7 @@ namespace SunnineReport.Views
             }
         }
         /// <summary>
-        /// 感測器數量
+        /// 感測器類型
         /// </summary>
         private int SenserIndex { get; set; }
         /// <summary>
@@ -54,28 +54,28 @@ namespace SunnineReport.Views
         /// 區域名稱
         /// </summary>
         private List<string> AreaStr { get; set; } = new List<string>();
-        public SenserDayReportUserControl(MssqlMethod method, DeviceSetting device)
+        public SenserDayReportUserControl(MssqlMethod method, DeviceSetting device, int senserIndex)
         {
             InitializeComponent();
+            SenserIndex = senserIndex;
             DeviceSetting = device;
             MssqlMethod = method;
             #region 設備下拉選單
             if (DeviceSetting != null)
             {
-                foreach (var DisBoxitem in DeviceSetting.SenserNames)
+                if (SenserIndex == 0)
                 {
-                    DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
-                    //foreach (var item in DisBoxitem.DeviceName)
-                    //{
-                    //    if (item.Name != "")
-                    //    {
-                    //        DevicecheckedComboBoxEdit.Properties.Items.Add(item.Name, false);
-                    //    }
-                    //    else
-                    //    {
-                    //        DevicecheckedComboBoxEdit.Properties.Items.Add(item.TTagName, false);
-                    //    }
-                    //}
+                    foreach (var DisBoxitem in DeviceSetting.SenserNames)
+                    {
+                        DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
+                    }
+                }
+                else
+                {
+                    foreach (var DisBoxitem in DeviceSetting.AirNames)
+                    {
+                        DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
+                    }
                 }
             }
             #endregion
@@ -103,20 +103,44 @@ namespace SunnineReport.Views
                     $"END ";
                     for (int i = 0; i < Device.Length; i++)
                     {
-                        foreach (var DisBoxitem in DeviceSetting.SenserNames)
+                        if (SenserIndex == 0)
                         {
-                            if (DisBoxitem.Name == Device[i].Trim())
+                            foreach (var DisBoxitem in DeviceSetting.SenserNames)
                             {
-                                foreach (var item in DisBoxitem.DeviceName)
+                                if (DisBoxitem.Name == Device[i].Trim())
                                 {
-                                    sql = Select_RT(Index, sql, item, StartTime, EndTime);
-                                    sql = Select_RH(Index, sql, item, StartTime, EndTime);
-                                    Index++;
-                                    SenserStr.Add(item.Name);
-                                    var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
-                                    if (AreaData == null)
+                                    foreach (var item in DisBoxitem.DeviceName)
                                     {
-                                        AreaStr.Add(DisBoxitem.Name);
+                                        sql = Select_RT(Index, sql, item, StartTime, EndTime);
+                                        //sql = Select_RH(Index, sql, item, StartTime, EndTime);
+                                        Index++;
+                                        SenserStr.Add(item.Name);
+                                        var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
+                                        if (AreaData == null)
+                                        {
+                                            AreaStr.Add(DisBoxitem.Name);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var DisBoxitem in DeviceSetting.AirNames)
+                            {
+                                if (DisBoxitem.Name == Device[i].Trim())
+                                {
+                                    foreach (var item in DisBoxitem.DeviceName)
+                                    {
+                                        sql = Select_ART(Index, sql, item, StartTime, EndTime);
+                                        //sql = Select_RH(Index, sql, item, StartTime, EndTime);
+                                        Index++;
+                                        SenserStr.Add(item.Name);
+                                        var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
+                                        if (AreaData == null)
+                                        {
+                                            AreaStr.Add(DisBoxitem.Name);
+                                        }
                                     }
                                 }
                             }
@@ -157,19 +181,19 @@ namespace SunnineReport.Views
                     GridBand[] AreagridBand = new GridBand[AreaStr.Count];//區域Band
                     GridBand[] SensergridBand = new GridBand[SenserStr.Count];//感測器Band
                     GridBand[] TempgridBand = new GridBand[SenserStr.Count];//溫度Band
-                    GridBand[] HumiditygridBand = new GridBand[SenserStr.Count];//濕度Band
+                    //GridBand[] HumiditygridBand = new GridBand[SenserStr.Count];//濕度Band
                     GridBand[] G_TMingridColumn = new GridBand[SenserStr.Count];//溫度最小值
                     GridBand[] G_TMaxgridColumn = new GridBand[SenserStr.Count];//溫度最大值
                     GridBand[] G_TAvggridColumn = new GridBand[SenserStr.Count];//溫度平均值
-                    GridBand[] G_HMingridColumn = new GridBand[SenserStr.Count];//濕度最小值
-                    GridBand[] G_HMaxgridColumn = new GridBand[SenserStr.Count];//濕度最大值
-                    GridBand[] G_HAvggridColumn = new GridBand[SenserStr.Count];//濕度平均值
+                    //GridBand[] G_HMingridColumn = new GridBand[SenserStr.Count];//濕度最小值
+                    //GridBand[] G_HMaxgridColumn = new GridBand[SenserStr.Count];//濕度最大值
+                    //GridBand[] G_HAvggridColumn = new GridBand[SenserStr.Count];//濕度平均值
                     BandedGridColumn[] TMingridColumn = new BandedGridColumn[SenserStr.Count];//溫度最小值
                     BandedGridColumn[] TMaxgridColumn = new BandedGridColumn[SenserStr.Count];//溫度最大值
                     BandedGridColumn[] TAvggridColumn = new BandedGridColumn[SenserStr.Count];//溫度平均值
-                    BandedGridColumn[] HMingridColumn = new BandedGridColumn[SenserStr.Count];//濕度最小值
-                    BandedGridColumn[] HMaxgridColumn = new BandedGridColumn[SenserStr.Count];//濕度最大值
-                    BandedGridColumn[] HAvggridColumn = new BandedGridColumn[SenserStr.Count];//濕度平均值
+                    //BandedGridColumn[] HMingridColumn = new BandedGridColumn[SenserStr.Count];//濕度最小值
+                    //BandedGridColumn[] HMaxgridColumn = new BandedGridColumn[SenserStr.Count];//濕度最大值
+                    //BandedGridColumn[] HAvggridColumn = new BandedGridColumn[SenserStr.Count];//濕度平均值
                     BandedGridColumn coltime = new BandedGridColumn() { Caption = "時間", FieldName = "Time", Visible = true, Width = 100 }; //建立Colum (時間)
 
                     for (int i = 0; i < AreaStr.Count; i++)
@@ -180,31 +204,31 @@ namespace SunnineReport.Views
                     {
                         SensergridBand[i] = new GridBand() { Caption = SenserStr[i] };
                         TempgridBand[i] = new GridBand() { Caption = "溫度" + " (\xb0" + "C)" };
-                        HumiditygridBand[i] = new GridBand() { Caption = "濕度 (%)" };
+                        //HumiditygridBand[i] = new GridBand() { Caption = "濕度 (%)" };
                         G_TMingridColumn[i] = new GridBand() { Caption = "最小值" };
                         G_TMaxgridColumn[i] = new GridBand() { Caption = "最大值" };
                         G_TAvggridColumn[i] = new GridBand() { Caption = "平均值" };
-                        G_HMingridColumn[i] = new GridBand() { Caption = "最小值" };
-                        G_HMaxgridColumn[i] = new GridBand() { Caption = "最大值" };
-                        G_HAvggridColumn[i] = new GridBand() { Caption = "平均值" };
+                        //G_HMingridColumn[i] = new GridBand() { Caption = "最小值" };
+                        //G_HMaxgridColumn[i] = new GridBand() { Caption = "最大值" };
+                        //G_HAvggridColumn[i] = new GridBand() { Caption = "平均值" };
                         TMingridColumn[i] = new BandedGridColumn() { Caption = "最小值", FieldName = $"T{i}Min", Visible = true };
                         TMaxgridColumn[i] = new BandedGridColumn() { Caption = "最大值", FieldName = $"T{i}Max", Visible = true };
                         TAvggridColumn[i] = new BandedGridColumn() { Caption = "平均值", FieldName = $"T{i}Avg", Visible = true };
-                        HMingridColumn[i] = new BandedGridColumn() { Caption = "最小值", FieldName = $"H{i}Min", Visible = true };
-                        HMaxgridColumn[i] = new BandedGridColumn() { Caption = "最大值", FieldName = $"H{i}Max", Visible = true };
-                        HAvggridColumn[i] = new BandedGridColumn() { Caption = "平均值", FieldName = $"H{i}Avg", Visible = true };
+                        //HMingridColumn[i] = new BandedGridColumn() { Caption = "最小值", FieldName = $"H{i}Min", Visible = true };
+                        //HMaxgridColumn[i] = new BandedGridColumn() { Caption = "最大值", FieldName = $"H{i}Max", Visible = true };
+                        //HAvggridColumn[i] = new BandedGridColumn() { Caption = "平均值", FieldName = $"H{i}Avg", Visible = true };
                         TMingridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
                         TMaxgridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
                         TAvggridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
-                        HMingridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
-                        HMaxgridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
-                        HAvggridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                        //HMingridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                        //HMaxgridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                        //HAvggridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
                         TMingridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
                         TMaxgridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
                         TAvggridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
-                        HMingridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
-                        HMaxgridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
-                        HAvggridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
+                        //HMingridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
+                        //HMaxgridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
+                        //HAvggridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字置中
                     }
                     view.Bands.Add(gridtime);
                     view.Bands.AddRange(AreagridBand);
@@ -215,19 +239,32 @@ namespace SunnineReport.Views
                     SenserIndex = 0;//感測器欄位建置好後歸零，給區域做運算用
                     for (int i = 0; i < AreaStr.Count; i++)
                     {
-                        var Areadata = DeviceSetting.SenserNames.SingleOrDefault(g => g.Name == AreaStr[i]);
-                        for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
+                        if (SenserIndex == 0)
                         {
-                            AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                            AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
-                            SenserIndex++;
+                           var Areadata = DeviceSetting.SenserNames.SingleOrDefault(g => g.Name == AreaStr[i]);
+                            for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
+                            {
+                                AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                                AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
+                                SenserIndex++;
+                            }
+                        }
+                        else
+                        {
+                            var Areadata = DeviceSetting.AirNames.SingleOrDefault(g => g.Name == AreaStr[i]);
+                            for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
+                            {
+                                AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                                AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
+                                SenserIndex++;
+                            }
                         }
                     }
                     for (int i = 0; i < SenserStr.Count; i++)
                     {
                         SensergridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
                         SensergridBand[i].Children.Add(TempgridBand[i]);
-                        SensergridBand[i].Children.Add(HumiditygridBand[i]);
+                        //SensergridBand[i].Children.Add(HumiditygridBand[i]);
                         TempgridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
                         TempgridBand[i].Children.Add(G_TMingridColumn[i]);
                         TempgridBand[i].Children.Add(G_TMaxgridColumn[i]);
@@ -235,13 +272,13 @@ namespace SunnineReport.Views
                         G_TMingridColumn[i].Columns.Add(TMingridColumn[i]);
                         G_TMaxgridColumn[i].Columns.Add(TMaxgridColumn[i]);
                         G_TAvggridColumn[i].Columns.Add(TAvggridColumn[i]);
-                        HumiditygridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                        HumiditygridBand[i].Children.Add(G_HMingridColumn[i]);
-                        HumiditygridBand[i].Children.Add(G_HMaxgridColumn[i]);
-                        HumiditygridBand[i].Children.Add(G_HAvggridColumn[i]);
-                        G_HMingridColumn[i].Columns.Add(HMingridColumn[i]);
-                        G_HMaxgridColumn[i].Columns.Add(HMaxgridColumn[i]);
-                        G_HAvggridColumn[i].Columns.Add(HAvggridColumn[i]);
+                        //HumiditygridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                        //HumiditygridBand[i].Children.Add(G_HMingridColumn[i]);
+                        //HumiditygridBand[i].Children.Add(G_HMaxgridColumn[i]);
+                        //HumiditygridBand[i].Children.Add(G_HAvggridColumn[i]);
+                        //G_HMingridColumn[i].Columns.Add(HMingridColumn[i]);
+                        //G_HMaxgridColumn[i].Columns.Add(HMaxgridColumn[i]);
+                        //G_HAvggridColumn[i].Columns.Add(HAvggridColumn[i]);
                     }
                     gridtime.Columns.Add(coltime);
                     view.OptionsCustomization.AllowChangeColumnParent = false;
@@ -287,11 +324,22 @@ namespace SunnineReport.Views
         }
         private string Select_RT(int i, string sql, RTHDeviceName item, DateTime StartTime, DateTime EndTime)
         {
-            sql += $"DECLARE @temp{i} AS TABLE ([Time] nvarchar(10), [Name] nvarchar(20), [Min] nvarchar(50) , [Max] nvarchar(50), [Avg] DECIMAL(18,2)) " +
+            sql += $"DECLARE @temp{i} AS TABLE ([Time] nvarchar(10), [Name] nvarchar(50), [Min] DECIMAL(18,2) , [Max] DECIMAL(18,2), [Avg] DECIMAL(18,2)) " +
                    $"INSERT INTO @temp{i}  ([Time], [Name], [Min], [Max], [Avg]) " +
-                   $"SELECT convert(varchar(10),[TIMESTAMP], 120)AS[Time], MAX(NAME)AS[Name],MIN(CAST([VALUE] AS DECIMAL(18,2)))AS[Min],MAX(CAST([VALUE] AS DECIMAL(18,2)))AS[Max] ,AVG(CAST([VALUE] AS DECIMAL(18,2))) AS [Avg] FROM[dbo].[RTH] " +
-                   $"WHERE NAME = 'LED.{item.TTagName}.404099' " +
-                   $"AND [TIMESTAMP] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [TIMESTAMP] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
+                   $"SELECT convert(varchar(10),[Timestamp], 120)AS[Time], MAX([Name])AS[Name],MIN(CAST([Value] AS DECIMAL(18,2)))AS[Min],MAX(CAST([Value] AS DECIMAL(18,2)))AS[Max] ,AVG(CAST([Value] AS DECIMAL(18,2))) AS [Avg] FROM[dbo].[Table_Steam] " +
+                   $"WHERE NAME = '{item.TTagName}' " +
+                   $"AND [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
+                   $"GROUP BY convert(varchar(10),[TIMESTAMP],120) " +
+                   $"ORDER BY convert(varchar(10),[TIMESTAMP],120) ";
+            return sql;
+        }
+        private string Select_ART(int i, string sql, RTHDeviceName item, DateTime StartTime, DateTime EndTime)
+        {
+            sql += $"DECLARE @temp{i} AS TABLE ([Time] nvarchar(10), [Name] nvarchar(50), [Min] DECIMAL(18,2) , [Max] DECIMAL(18,2), [Avg] DECIMAL(18,2)) " +
+                   $"INSERT INTO @temp{i}  ([Time], [Name], [Min], [Max], [Avg]) " +
+                   $"SELECT convert(varchar(10),[Timestamp], 120)AS[Time], MAX([Name])AS[Name],MIN(CAST([Value] AS DECIMAL(18,2)))AS[Min],MAX(CAST([Value] AS DECIMAL(18,2)))AS[Max] ,AVG(CAST([Value] AS DECIMAL(18,2))) AS [Avg] FROM[dbo].[Table_Temp1] " +
+                   $"WHERE NAME = '{item.TTagName}' " +
+                   $"AND [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
                    $"GROUP BY convert(varchar(10),[TIMESTAMP],120) " +
                    $"ORDER BY convert(varchar(10),[TIMESTAMP],120) ";
             return sql;
@@ -300,11 +348,11 @@ namespace SunnineReport.Views
         {
             sql += $"DECLARE @humidity{i} AS TABLE ([Time] nvarchar(10), [Name] nvarchar(20), [Min] nvarchar(50), [Max] nvarchar(50), [Avg] DECIMAL(18,2)) " +
                    $"INSERT INTO @humidity{i}  ([Time], [Name], [Min], [Max], [Avg]) " +
-                   $"SELECT convert(varchar(10),[TIMESTAMP], 120)AS[Time], MAX(NAME)AS[Name],MIN(CAST([VALUE] AS DECIMAL(18,2)))AS[Min],MAX(CAST([VALUE] AS DECIMAL(18,2)))AS[Max] ,AVG(CAST([VALUE] AS DECIMAL(18,2))) AS [Avg] FROM[dbo].[RTH] " +
+                   $"SELECT convert(varchar(10),[Timestamp], 120)AS[Time], MAX(Name)AS[Name],MIN(CAST([Value] AS DECIMAL(18,2)))AS[Min],MAX(CAST([Value] AS DECIMAL(18,2)))AS[Max] ,AVG(CAST([Value] AS DECIMAL(18,2))) AS [Avg] FROM[dbo].[Table_2] " +
                    $"WHERE NAME = 'LED.{item.HTagName}.404099' " +
-                   $"AND [TIMESTAMP] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [TIMESTAMP] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
-                   $"GROUP BY convert(varchar(10),[TIMESTAMP],120) " +
-                   $"ORDER BY convert(varchar(10),[TIMESTAMP],120) ";
+                   $"AND [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
+                   $"GROUP BY convert(varchar(10),[Timestamp],120) " +
+                   $"ORDER BY convert(varchar(10),[Timestamp],120) ";
             return sql;
         }
         private string SelectFunction(int Index, string sql)
@@ -320,16 +368,16 @@ namespace SunnineReport.Views
                 //       $",ISNULL(H{i}.[Avg],0) AS [H{i}Avg]";
                 sql += $",T{i}.[Min] AS [T{i}Min]" +
                        $",T{i}.[Max] AS [T{i}Max]" +
-                       $",T{i}.[Avg] AS [T{i}Avg]" +
-                       $",H{i}.[Min] AS [H{i}Min]" +
-                       $",H{i}.[Max] AS [H{i}Max]" +
-                       $",H{i}.[Avg] AS [H{i}Avg]";
+                       $",T{i}.[Avg] AS [T{i}Avg]";
+                //$",H{i}.[Min] AS [H{i}Min]" +
+                //$",H{i}.[Max] AS [H{i}Max]" +
+                //$",H{i}.[Avg] AS [H{i}Avg]";
             }
             sql += " FROM @mainTemp AS mainT";
             for (int i = 0; i < Index; i++)
             {
-                sql += $" LEFT JOIN @temp{i} AS T{i} ON  convert(varchar(10),mainT.[ttimen],120) = T{i}.[Time]" +
-                       $" LEFT JOIN @humidity{i} AS H{i} ON convert(varchar(10),mainT.[ttimen],120) = H{i}.[Time]";
+                sql += $" LEFT JOIN @temp{i} AS T{i} ON  convert(varchar(10),mainT.[ttimen],120) = T{i}.[Time]";
+                //$" LEFT JOIN @humidity{i} AS H{i} ON convert(varchar(10),mainT.[ttimen],120) = H{i}.[Time]";
             }
             return sql;
         }
