@@ -87,174 +87,185 @@ namespace InnoLightReport.Views
             #region 查詢按鈕
             SearchsimpleButton.Click += (s, e) =>
             {
-                handle = SplashScreenManager.ShowOverlayForm(FindForm());
-                AreaStr = new List<string>();
-                DiskBoxeStr = new List<string>();
-                ElectricStr = new List<string>();
-                Index = 0;
-                DateTime StartTime = Convert.ToDateTime(Convert.ToDateTime(StartdateEdit.EditValue).ToString("yyyy/MM/dd 00:00:00"));
-                DateTime EndTime = Convert.ToDateTime(Convert.ToDateTime(EnddateEdit.EditValue).ToString("yyyy/MM/dd 23:59:59"));
-                string[] Device = DevicecheckedComboBoxEdit.Text.Split(',');
-                DataTable dataTable = new DataTable();
-                string sql = $"DECLARE @regTIme DATETIME, @startTime DATETIME, @endTime DATETIME " +
-                             $"SET @startTime ='{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' " +
-                             $"SET @endTime = '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}' " +
-                             $"SET @regTIme = @startTime DECLARE @mainTemp AS TABLE (ttime CHAR(14),ttimen DATETIME) " +
-                             $"WHILE @regTIme <= @endTime " +
-                             $"BEGIN " +
-                             $"INSERT INTO @mainTemp(ttime, ttimen) VALUES (FORMAT(@regTIme, N'yyyyMMddHHmmss'), @regTIme) " +
-                             $"SET @regTIme = DATEADD(day,1,@regTIme) " +
-                             $"END ";
-                for (int i = 0; i < Device.Length; i++)
+                if (Convert.ToDateTime(StartdateEdit.EditValue) <= Convert.ToDateTime(EnddateEdit.EditValue))
                 {
-                    foreach (var Areaitem in DeviceSetting.VoltageNames)
+                    handle = SplashScreenManager.ShowOverlayForm(FindForm());
+                    AreaStr = new List<string>();
+                    DiskBoxeStr = new List<string>();
+                    ElectricStr = new List<string>();
+                    Index = 0;
+                    DateTime StartTime = Convert.ToDateTime(Convert.ToDateTime(StartdateEdit.EditValue).ToString("yyyy/MM/dd 00:00:00"));
+                    DateTime EndTime = Convert.ToDateTime(Convert.ToDateTime(EnddateEdit.EditValue).ToString("yyyy/MM/dd 23:59:59"));
+                    string[] Device = DevicecheckedComboBoxEdit.Text.Split(',');
+                    DataTable dataTable = new DataTable();
+                    string sql = $"DECLARE @regTIme DATETIME, @startTime DATETIME, @endTime DATETIME " +
+                                 $"SET @startTime ='{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' " +
+                                 $"SET @endTime = '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}' " +
+                                 $"SET @regTIme = @startTime DECLARE @mainTemp AS TABLE (ttime CHAR(14),ttimen DATETIME) " +
+                                 $"WHILE @regTIme <= @endTime " +
+                                 $"BEGIN " +
+                                 $"INSERT INTO @mainTemp(ttime, ttimen) VALUES (FORMAT(@regTIme, N'yyyyMMddHHmmss'), @regTIme) " +
+                                 $"SET @regTIme = DATEADD(day,1,@regTIme) " +
+                                 $"END ";
+                    for (int i = 0; i < Device.Length; i++)
                     {
-                        if (Areaitem.Name == Device[i].Trim())
+                        foreach (var Areaitem in DeviceSetting.VoltageNames)
                         {
-                            foreach (var DiskBoxeitem in Areaitem.DiskBoxes)
+                            if (Areaitem.Name == Device[i].Trim())
                             {
-                                foreach (var item in DiskBoxeitem.DeviceName)
+                                foreach (var DiskBoxeitem in Areaitem.DiskBoxes)
                                 {
-                                    sql = Select_Current(Index, sql, item, StartTime, EndTime);
-                                    Index++;
-                                    ElectricStr.Add(item.Name);
-                                    var DiskBoxeData = DiskBoxeStr.SingleOrDefault(g => g == DiskBoxeitem.Name);
-                                    if (DiskBoxeData == null)
+                                    foreach (var item in DiskBoxeitem.DeviceName)
                                     {
-                                        DiskBoxeStr.Add(DiskBoxeitem.Name);
-                                    }
-                                    var AreaData = AreaStr.SingleOrDefault(g => g == Areaitem.Name);
-                                    if (AreaData == null)
-                                    {
-                                        AreaStr.Add(Areaitem.Name);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                sql = SelectFunction(Index, sql);
-                try
-                {
-                    using (var con = new SqlConnection(MssqlMethod.scsb.ConnectionString))
-                    {
-                        var data = con.ExecuteReader(sql);
-                        dataTable.Load(data);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "查詢小時累積量報表錯誤");
-                    CloseProgressPanel(handle);
-                }
-                BandedGridView view = new BandedGridView(CurrentgridControl);
-                view.MinBandPanelRowCount = 1; // Band欄位高度
-                //view.OptionsPrint.AutoWidth = false;//報表匯出不自動縮放長度
-                //view.OptionsPrint.PrintHeader = false;//不顯示Columns標頭
-                //view.Appearance.Row.FontSizeDelta = 9; //數值大小
-                view.OptionsView.ColumnHeaderAutoHeight = DefaultBoolean.True;//Colum 自動調整高度
-                view.OptionsBehavior.AutoPopulateColumns = false;//不建立沒有Colum相同名稱
-                view.OptionsView.ShowGroupPanel = false;//不顯示Drag
-                view.OptionsView.ColumnAutoWidth = false;//不自動縮放長度
-                view.OptionsCustomization.AllowFilter = false;//取消查詢
-                view.OptionsCustomization.AllowSort = false;//取消排版
-                view.OptionsBehavior.Editable = false;//Cell不可編輯
-                view.OptionsSelection.EnableAppearanceFocusedCell = false;
-                view.OptionsView.ShowColumnHeaders = false;//隱藏CoumnHeader
-                view.OptionsCustomization.AllowBandMoving = false;//GridBand 不可移動
-
-                GridBand gridtime = new GridBand() { Caption = "時間" }; //建立&宣告Band (時間)
-                gridtime.AppearanceHeader.Options.UseTextOptions = true;
-                gridtime.AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                GridBand[] AreagridBand = new GridBand[AreaStr.Count];
-                GridBand[] DiskBoxeBand = new GridBand[DiskBoxeStr.Count];
-                GridBand[] ElectricBand = new GridBand[ElectricStr.Count];
-                GridBand[] G_MingridColumn = new GridBand[ElectricStr.Count];//最小值
-                GridBand[] G_MaxgridColumn = new GridBand[ElectricStr.Count];//最大值
-                GridBand[] G_AvggridColumn = new GridBand[ElectricStr.Count];//平均值
-                BandedGridColumn[] MingridColumn = new BandedGridColumn[ElectricStr.Count];//溫度最小值
-                BandedGridColumn[] MaxgridColumn = new BandedGridColumn[ElectricStr.Count];//溫度最大值
-                BandedGridColumn[] AvggridColumn = new BandedGridColumn[ElectricStr.Count];//溫度平均值
-                BandedGridColumn coltime = new BandedGridColumn() { Caption = "時間", FieldName = "Time", Visible = true, Width = 100 }; //建立Colum (時間)
-                for (int i = 0; i < AreaStr.Count; i++)
-                {
-                    AreagridBand[i] = new GridBand() { Caption = AreaStr[i] };
-                }
-                for (int i = 0; i < DiskBoxeStr.Count; i++)
-                {
-                    DiskBoxeBand[i] = new GridBand() { Caption = DiskBoxeStr[i], Width = 200 };
-                }
-                for (int i = 0; i < ElectricStr.Count; i++)
-                {
-                    ElectricBand[i] = new GridBand() { Caption = ElectricStr[i] };
-                    G_MingridColumn[i] = new GridBand() { Caption = "最小值" };
-                    G_MaxgridColumn[i] = new GridBand() { Caption = "最大值" };
-                    G_AvggridColumn[i] = new GridBand() { Caption = "平均值" };
-                    MingridColumn[i] = new BandedGridColumn() { Caption = "最小值", FieldName = $"Kwh{i}Min", Visible = true, Width = 200 };
-                    MaxgridColumn[i] = new BandedGridColumn() { Caption = "最大值", FieldName = $"Kwh{i}Max", Visible = true, Width = 200 };
-                    AvggridColumn[i] = new BandedGridColumn() { Caption = "平均值", FieldName = $"Kwh{i}Avg", Visible = true, Width = 200 };
-                }
-                view.Bands.Add(gridtime);
-                view.Bands.AddRange(AreagridBand);
-                CurrentgridControl.DataSource = dataTable;
-                CurrentgridControl.ViewCollection.Add(view);
-                CurrentgridControl.MainView = view;
-
-                ElectricIndex = 0;
-                DiskBoxe = 0;
-                for (int i = 0; i < AreaStr.Count; i++)
-                {
-                    var Areadata = DeviceSetting.VoltageNames.SingleOrDefault(g => g.Name == AreaStr[i]);
-                    for (int Index = 0; Index < Areadata.DiskBoxes.Count; Index++)
-                    {
-                        AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                        AreagridBand[i].Children.Add(DiskBoxeBand[DiskBoxe]);
-                        DiskBoxe++;
-                    }
-                }
-                for (int i = 0; i < AreaStr.Count; i++)
-                {
-                    for (int DisBoxIndex = 0; DisBoxIndex < DiskBoxeStr.Count; DisBoxIndex++)
-                    {
-                        foreach (var item in DeviceSetting.VoltageNames)
-                        {
-                            if (item.Name == AreaStr[i])
-                            {
-                                foreach (var DiskBoxesitem in item.DiskBoxes)
-                                {
-                                    if (DiskBoxesitem.Name == DiskBoxeStr[DisBoxIndex])
-                                    {
-                                        for (int Index = 0; Index < DiskBoxesitem.DeviceName.Count; Index++)
+                                        sql = Select_Current(Index, sql, item, StartTime, EndTime);
+                                        Index++;
+                                        ElectricStr.Add(item.Name);
+                                        var DiskBoxeData = DiskBoxeStr.SingleOrDefault(g => g == DiskBoxeitem.Name);
+                                        if (DiskBoxeData == null)
                                         {
-                                            DiskBoxeBand[DisBoxIndex].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                                            DiskBoxeBand[DisBoxIndex].Children.Add(ElectricBand[ElectricIndex]);
-                                            ElectricIndex++;
+                                            DiskBoxeStr.Add(DiskBoxeitem.Name);
+                                        }
+                                        var AreaData = AreaStr.SingleOrDefault(g => g == Areaitem.Name);
+                                        if (AreaData == null)
+                                        {
+                                            AreaStr.Add(Areaitem.Name);
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                    sql = SelectFunction(Index, sql);
+                    try
+                    {
+                        using (var con = new SqlConnection(MssqlMethod.scsb.ConnectionString))
+                        {
+                            var data = con.ExecuteReader(sql);
+                            dataTable.Load(data);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "查詢小時累積量報表錯誤");
+                        CloseProgressPanel(handle);
+                    }
+                    BandedGridView view = new BandedGridView(CurrentgridControl);
+                    view.MinBandPanelRowCount = 1; // Band欄位高度
+                                                   //view.OptionsPrint.AutoWidth = false;//報表匯出不自動縮放長度
+                                                   //view.OptionsPrint.PrintHeader = false;//不顯示Columns標頭
+                                                   //view.Appearance.Row.FontSizeDelta = 9; //數值大小
+                    view.OptionsView.ColumnHeaderAutoHeight = DefaultBoolean.True;//Colum 自動調整高度
+                    view.OptionsBehavior.AutoPopulateColumns = false;//不建立沒有Colum相同名稱
+                    view.OptionsView.ShowGroupPanel = false;//不顯示Drag
+                    view.OptionsView.ColumnAutoWidth = false;//不自動縮放長度
+                    view.OptionsCustomization.AllowFilter = false;//取消查詢
+                    view.OptionsCustomization.AllowSort = false;//取消排版
+                    view.OptionsBehavior.Editable = false;//Cell不可編輯
+                    view.OptionsSelection.EnableAppearanceFocusedCell = false;
+                    view.OptionsView.ShowColumnHeaders = false;//隱藏CoumnHeader
+                    view.OptionsCustomization.AllowBandMoving = false;//GridBand 不可移動
+
+                    GridBand gridtime = new GridBand() { Caption = "時間" }; //建立&宣告Band (時間)
+                    gridtime.AppearanceHeader.Options.UseTextOptions = true;
+                    gridtime.AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                    GridBand[] AreagridBand = new GridBand[AreaStr.Count];
+                    GridBand[] DiskBoxeBand = new GridBand[DiskBoxeStr.Count];
+                    GridBand[] ElectricBand = new GridBand[ElectricStr.Count];
+                    GridBand[] G_MingridColumn = new GridBand[ElectricStr.Count];//最小值
+                    GridBand[] G_MaxgridColumn = new GridBand[ElectricStr.Count];//最大值
+                    GridBand[] G_AvggridColumn = new GridBand[ElectricStr.Count];//平均值
+                    BandedGridColumn[] MingridColumn = new BandedGridColumn[ElectricStr.Count];//溫度最小值
+                    BandedGridColumn[] MaxgridColumn = new BandedGridColumn[ElectricStr.Count];//溫度最大值
+                    BandedGridColumn[] AvggridColumn = new BandedGridColumn[ElectricStr.Count];//溫度平均值
+                    BandedGridColumn coltime = new BandedGridColumn() { Caption = "時間", FieldName = "Time", Visible = true, Width = 100 }; //建立Colum (時間)
+                    for (int i = 0; i < AreaStr.Count; i++)
+                    {
+                        AreagridBand[i] = new GridBand() { Caption = AreaStr[i] };
+                    }
+                    for (int i = 0; i < DiskBoxeStr.Count; i++)
+                    {
+                        DiskBoxeBand[i] = new GridBand() { Caption = DiskBoxeStr[i], Width = 200 };
+                    }
+                    for (int i = 0; i < ElectricStr.Count; i++)
+                    {
+                        ElectricBand[i] = new GridBand() { Caption = ElectricStr[i] };
+                        G_MingridColumn[i] = new GridBand() { Caption = "最小值" };
+                        G_MaxgridColumn[i] = new GridBand() { Caption = "最大值" };
+                        G_AvggridColumn[i] = new GridBand() { Caption = "平均值" };
+                        MingridColumn[i] = new BandedGridColumn() { Caption = "最小值", FieldName = $"Kwh{i}Min", Visible = true, Width = 200 };
+                        MaxgridColumn[i] = new BandedGridColumn() { Caption = "最大值", FieldName = $"Kwh{i}Max", Visible = true, Width = 200 };
+                        AvggridColumn[i] = new BandedGridColumn() { Caption = "平均值", FieldName = $"Kwh{i}Avg", Visible = true, Width = 200 };
+                    }
+                    view.Bands.Add(gridtime);
+                    view.Bands.AddRange(AreagridBand);
+                    CurrentgridControl.DataSource = dataTable;
+                    CurrentgridControl.ViewCollection.Add(view);
+                    CurrentgridControl.MainView = view;
+
+                    ElectricIndex = 0;
+                    DiskBoxe = 0;
+                    for (int i = 0; i < AreaStr.Count; i++)
+                    {
+                        var Areadata = DeviceSetting.VoltageNames.SingleOrDefault(g => g.Name == AreaStr[i]);
+                        for (int Index = 0; Index < Areadata.DiskBoxes.Count; Index++)
+                        {
+                            AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                            AreagridBand[i].Children.Add(DiskBoxeBand[DiskBoxe]);
+                            DiskBoxe++;
+                        }
+                    }
+                    for (int i = 0; i < AreaStr.Count; i++)
+                    {
+                        for (int DisBoxIndex = 0; DisBoxIndex < DiskBoxeStr.Count; DisBoxIndex++)
+                        {
+                            foreach (var item in DeviceSetting.VoltageNames)
+                            {
+                                if (item.Name == AreaStr[i])
+                                {
+                                    foreach (var DiskBoxesitem in item.DiskBoxes)
+                                    {
+                                        if (DiskBoxesitem.Name == DiskBoxeStr[DisBoxIndex])
+                                        {
+                                            for (int Index = 0; Index < DiskBoxesitem.DeviceName.Count; Index++)
+                                            {
+                                                DiskBoxeBand[DisBoxIndex].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                                                DiskBoxeBand[DisBoxIndex].Children.Add(ElectricBand[ElectricIndex]);
+                                                ElectricIndex++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (int i = 0; i < ElectricStr.Count; i++)
+                    {
+                        ElectricBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                        ElectricBand[i].Children.Add(G_MingridColumn[i]);
+                        ElectricBand[i].Children.Add(G_MaxgridColumn[i]);
+                        ElectricBand[i].Children.Add(G_AvggridColumn[i]);
+                        G_MingridColumn[i].Columns.Add(MingridColumn[i]);
+                        G_MaxgridColumn[i].Columns.Add(MaxgridColumn[i]);
+                        G_AvggridColumn[i].Columns.Add(AvggridColumn[i]);
+                        MingridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                        MingridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
+                        MaxgridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                        MaxgridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
+                        AvggridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
+                        AvggridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
+                    }
+                    gridtime.Columns.Add(coltime);
+                    view.OptionsCustomization.AllowChangeColumnParent = false;
+                    CloseProgressPanel(handle);
                 }
-                for (int i = 0; i < ElectricStr.Count; i++)
+                else
                 {
-                    ElectricBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                    ElectricBand[i].Children.Add(G_MingridColumn[i]);
-                    ElectricBand[i].Children.Add(G_MaxgridColumn[i]);
-                    ElectricBand[i].Children.Add(G_AvggridColumn[i]);
-                    G_MingridColumn[i].Columns.Add(MingridColumn[i]);
-                    G_MaxgridColumn[i].Columns.Add(MaxgridColumn[i]);
-                    G_AvggridColumn[i].Columns.Add(AvggridColumn[i]);
-                    MingridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
-                    MingridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
-                    MaxgridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
-                    MaxgridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
-                    AvggridColumn[i].AppearanceCell.Options.UseTextOptions = true;//啟用文字控制
-                    AvggridColumn[i].AppearanceCell.TextOptions.HAlignment = HorzAlignment.Near;//文字靠左
+                    FlyoutAction action = new FlyoutAction();
+                    action.Caption = "時間查詢錯誤";
+                    action.Description = "請設定好時間條件再進行查詢";
+                    action.Commands.Add(FlyoutCommand.OK);
+                    FlyoutDialog.Show(FindForm(), action);
                 }
-                gridtime.Columns.Add(coltime);
-                view.OptionsCustomization.AllowChangeColumnParent = false;
-                CloseProgressPanel(handle);
             };
             #endregion
             #region 匯出按鈕

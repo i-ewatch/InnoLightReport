@@ -43,9 +43,13 @@ namespace SunnineReport.Views
             }
         }
         /// <summary>
-        /// 感測器類型
+        /// 感測器數量
         /// </summary>
         private int SenserIndex { get; set; }
+        /// <summary>
+        /// 感測器類型
+        /// </summary>
+        private int SenserIndex1 { get; set; }
         /// <summary>
         /// 感測器名稱
         /// </summary>
@@ -57,13 +61,13 @@ namespace SunnineReport.Views
         public SenserDayReportUserControl(MssqlMethod method, DeviceSetting device, int senserIndex)
         {
             InitializeComponent();
-            SenserIndex = senserIndex;
+            SenserIndex1 = senserIndex;
             DeviceSetting = device;
             MssqlMethod = method;
             #region 設備下拉選單
             if (DeviceSetting != null)
             {
-                if (SenserIndex == 0)
+                if (SenserIndex1 == 0)
                 {
                     foreach (var DisBoxitem in DeviceSetting.SenserNames)
                     {
@@ -103,7 +107,7 @@ namespace SunnineReport.Views
                     $"END ";
                     for (int i = 0; i < Device.Length; i++)
                     {
-                        if (SenserIndex == 0)
+                        if (SenserIndex1 == 0)
                         {
                             foreach (var DisBoxitem in DeviceSetting.SenserNames)
                             {
@@ -239,7 +243,7 @@ namespace SunnineReport.Views
                     SenserIndex = 0;//感測器欄位建置好後歸零，給區域做運算用
                     for (int i = 0; i < AreaStr.Count; i++)
                     {
-                        if (SenserIndex == 0)
+                        if (SenserIndex1 == 0)
                         {
                            var Areadata = DeviceSetting.SenserNames.SingleOrDefault(g => g.Name == AreaStr[i]);
                             for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
