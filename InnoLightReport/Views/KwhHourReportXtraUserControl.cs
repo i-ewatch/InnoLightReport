@@ -267,13 +267,27 @@ namespace InnoLightReport.Views
         }
         private string Select_Kwh(int i, string sql, DeviceName item, DateTime StartTime, DateTime EndTime)
         {
+            //sql += $"DECLARE @Kwh{i} AS TABLE ([Time] nvarchar(13), [Name] nvarchar(50), [Total] DECIMAL(18,2)) " +
+            //       $"INSERT INTO @Kwh{i}  ([Time], [Name],[Total]) " +
+            //       $"SELECT  convert(varchar(13),[Timestamp], 120)AS[Time]," +
+            //       $" MAX(Name)AS[Name]," +
+            //       $"(MAX(CAST([Value] AS DECIMAL(18,2))) - MIN(CAST([Value] AS DECIMAL(18,2)))) AS Total " +
+            //       $"FROM [dbo].[Table_KWH] " +
+            //       $"WHERE NAME = '{item.TagName}' " +
+            //       $"AND [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
+            //       $"GROUP BY convert(varchar(13),[Timestamp],120) " +
+            //       $"ORDER BY convert(varchar(13),[Timestamp],120) ";
             sql += $"DECLARE @Kwh{i} AS TABLE ([Time] nvarchar(13), [Name] nvarchar(50), [Total] DECIMAL(18,2)) " +
-                   $"INSERT INTO @Kwh{i}  ([Time], [Name],[Total]) " +
-                   $"SELECT  convert(varchar(13),[Timestamp], 120)AS[Time], MAX(Name)AS[Name],(MAX(CAST([Value] AS DECIMAL(18,2))) - MIN(CAST([Value] AS DECIMAL(18,2)))) AS Total FROM [dbo].[Table_KWH] " +
-                   $"WHERE NAME = '{item.TagName}' " +
-                   $"AND [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }' " +
-                   $"GROUP BY convert(varchar(13),[Timestamp],120) " +
-                   $"ORDER BY convert(varchar(13),[Timestamp],120) ";
+                 $"INSERT INTO @Kwh{i}  ([Time], [Name],[Total]) " +
+                $"SELECT T.[Time],T.[Name],T.[Total] FROM( " +
+                $"SELECT CONVERT ( VARCHAR ( 13 ), [Timestamp], 120 ) AS [Time]," +
+                $"[Name]," +
+                $"(CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY CONVERT ( VARCHAR ( 13 ), [Timestamp], 120 ) ORDER BY [Timestamp] DESC )AS DECIMAL(18,2)) - " +
+                $"CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY CONVERT ( VARCHAR ( 13 ), [Timestamp], 120 ) ORDER BY [Timestamp] )AS DECIMAL(18,2)) )AS [Total] " +
+                $"FROM [dbo].[Table_KWH] WHERE  NAME = '{item.TagName}'" +
+                $"AND [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss") }')AS T " +
+                $"Group by T.[Time],T.[Name],T.[Total] " +
+                $"order by T.[Time]";
             return sql;
         }
         private string SelectFunction(int Index, string sql)

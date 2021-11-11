@@ -108,7 +108,7 @@ namespace SunnineReport.Views
                         DateTime EndTime = Convert.ToDateTime(EnddateEdit.DateTime.ToString("yyyy/MM/dd 23:59:59"));
                         string[] Device = DevicecheckedComboBoxEdit.Text.Split(',');
                         DataTable dataTable = new DataTable();
-                        string sql = $"DECLARE @Kwh AS TABLE ([Time] nvarchar(10) , [Name] nvarchar(20), [Min] nvarchar(50), [Max] nvarchar(50), [Total] DECIMAL(18,2)) ";
+                        string sql = string.Empty;
                         for (int i = 0; i < Device.Length; i++)
                         {
                             foreach (var Systemitem in DeviceSetting.ElectricNames)
@@ -199,7 +199,7 @@ namespace SunnineReport.Views
                     saveFileDialog.DefaultExt = ".xlsx";
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        KwhgridView.ExportToXlsx($"{saveFileDialog.FileName}",options);
+                        KwhgridView.ExportToXlsx($"{saveFileDialog.FileName}", options);
                     }
                 }
                 else
@@ -223,12 +223,31 @@ namespace SunnineReport.Views
         /// <param name="EndTime">結束時間</param>
         private string SelectFunction(string sql, DeviceName item, DateTime StartTime, DateTime EndTime)
         {
-            sql += $"INSERT INTO @Kwh ([Time], [Name], [Min], [Max], [Total])" +
-                   $"SELECT convert(varchar(10),[TIMESTAMP],120)AS [Time], MAX(NAME)AS [Name],MIN(CAST([VALUE] AS DECIMAL(18,2)))AS [Min],MAX(CAST([VALUE] AS DECIMAL(18,2)))AS [Max] ,(MAX(CAST([VALUE] AS DECIMAL(18,2))) -MIN(CAST([VALUE] AS DECIMAL(18,2))))AS [Total] FROM [dbo].[PM] " +
-                   $"WHERE NAME ='PM.{item.TagName.Trim()}.KWH' " +
-                   $"AND [TIMESTAMP] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [TIMESTAMP] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}' " +
-                   $"GROUP BY convert(varchar(10),[TIMESTAMP],120) " +
-                   $"ORDER BY convert(varchar(10),[TIMESTAMP],120)";
+            //sql += $"DECLARE @Kwh AS TABLE ([Time] nvarchar(10) , [Name] nvarchar(20), [Min] nvarchar(50), [Max] nvarchar(50), [Total] DECIMAL(18,2)) "
+            //       $"INSERT INTO @Kwh ([Time], [Name], [Min], [Max], [Total])" +
+            //       $"SELECT convert(varchar(10),[TIMESTAMP],120)AS [Time], " +
+            //       $"MAX(NAME)AS [Name]," +
+            //       $"MIN(CAST([VALUE] AS DECIMAL(18,2)))AS [Min]," +
+            //       $"MAX(CAST([VALUE] AS DECIMAL(18,2)))AS [Max] ," +
+            //       $"(MAX(CAST([VALUE] AS DECIMAL(18,2))) -MIN(CAST([VALUE] AS DECIMAL(18,2))))AS [Total] " +
+            //       $"FROM [dbo].[PM] " +
+            //       $"WHERE NAME ='PM.{item.TagName.Trim()}.KWH' " +
+            //       $"AND [TIMESTAMP] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [TIMESTAMP] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}' " +
+            //       $"GROUP BY convert(varchar(10),[TIMESTAMP],120) " +
+            //       $"ORDER BY convert(varchar(10),[TIMESTAMP],120)";
+            sql += $"DECLARE @Kwh AS TABLE ([Time] nvarchar(10), [Name] nvarchar(50), [Min] DECIMAL(18,2), [Max] DECIMAL(18,2), [Total] DECIMAL(18,2) " +
+                   $"INSERT INTO @Kwh  ([Time], [Name], [Min], [Max],[Total]) " +
+                   $"SELECT T.[Time],T.[Name],T.[Min],T.[Max],T.[Total] FROM( " +
+                   $"SELECT CONVERT ( VARCHAR ( 13 ), [Timestamp], 120 ) AS [Time]," +
+                   $"[Name]," +
+                   $"(CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] )AS DECIMAL(18,2)))AS [Min]," +
+                   $"(CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] DESC )AS DECIMAL(18,2)))AS [Max]," +
+                   $"(CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] DESC )AS DECIMAL(18,2)) -" +
+                   $"CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] )AS DECIMAL(18,2)) )AS [Total]" +
+                   $"FROM [dbo].[Table_KWH] WHERE  [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}'" +
+                   $")AS T " +
+                   $"Group by T.[Time],T.[Name],T.[Min],T.[Max],T.[Total] " +
+                   $"order by T.[Time]";
             return sql;
         }
         #endregion

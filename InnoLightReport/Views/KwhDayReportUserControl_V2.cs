@@ -43,8 +43,17 @@ namespace InnoLightReport.Views
                     DateTime StartTime = Convert.ToDateTime(StartdateEdit.DateTime.ToString("yyyy/MM/dd 00:00:00"));
                     DateTime EndTime = Convert.ToDateTime(EnddateEdit.DateTime.ToString("yyyy/MM/dd 23:59:59"));
                     string[] Device = DevicecheckedComboBoxEdit.Text.Split(',');
-                    string sql = $"SELECT NAME, CAST(MIN([Value])AS DECIMAL(18,2)) AS [Min] ,CAST(MAX([Value]) AS DECIMAL(18,2)) AS [Max] ,(CAST(MAX([Value])AS DECIMAL(18,2))-CAST(MIN([Value]) AS DECIMAL(18,2))) AS [Total] FROM [dbo].[Table_KWH] " +
-                                 $"WHERE [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}' GROUP BY NAME";
+                    //string sql = $"SELECT NAME, CAST(MIN([Value])AS DECIMAL(18,2)) AS [Min] ,CAST(MAX([Value]) AS DECIMAL(18,2)) AS [Max] ,(CAST(MAX([Value])AS DECIMAL(18,2))-CAST(MIN([Value]) AS DECIMAL(18,2))) AS [Total] FROM [dbo].[Table_KWH] " +
+                    //             $"WHERE [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}' GROUP BY NAME";
+                    string sql = $"SELECT T.[Name],T.[Min],T.[Max],T.[Total] FROM ( " +
+                                 $"SELECT [Name]," +
+                                 $"(CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] )AS DECIMAL(18,2)))AS [Min]," +
+                                 $"(CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] DESC )AS DECIMAL(18,2)))AS [Max]," +
+                                 $"(CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] DESC )AS DECIMAL(18,2)) -" +
+                                 $"CAST(FIRST_VALUE ( [Value] ) OVER ( PARTITION BY [Name],CONVERT ( VARCHAR ( 10 ), [Timestamp], 120 ) ORDER BY [Timestamp] )AS DECIMAL(18,2)) )AS [Total]" +
+                                 $"FROM [dbo].[Table_KWH] WHERE  [Timestamp] >= '{StartTime.ToString("yyyy/MM/dd HH:mm:ss")}' AND [Timestamp] <= '{EndTime.ToString("yyyy/MM/dd HH:mm:ss")}'" +
+                                 $")AS T " +
+                                 $"GROUP BY T.[Name],T.[Min],T.[Max],T.[Total] ";
                     List<KwhData> DeviceData = new List<KwhData>();
                     List<KwhData> ReportData = new List<KwhData>();
                     try
