@@ -132,7 +132,7 @@ namespace InnoLightReport.Views
                 {
                     using (var con = new SqlConnection(MssqlMethod.scsb.ConnectionString))
                     {
-                        var data = con.ExecuteReader(sql);
+                        var data = con.ExecuteReader(sql,commandTimeout:0);
                         dataTable.Load(data);
                     }
                 }

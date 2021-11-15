@@ -60,7 +60,7 @@ namespace InnoLightReport.Views
                     {
                         using (var con = new SqlConnection(MssqlMethod.scsb.ConnectionString))
                         {
-                            DeviceData = con.Query<KwhData>(sql).ToList();
+                            DeviceData = con.Query<KwhData>(sql, commandTimeout: 0).ToList();
                         }
                     }
                     catch (Exception ex)
@@ -68,34 +68,37 @@ namespace InnoLightReport.Views
                         Log.Error(ex, $"查詢區域累計量錯誤");
                         CloseProgressPanel(handle);
                     }
-                    for (int i = 0; i < Device.Length; i++)
+                    var data1 = (from KwhData in DeviceData
+                                 group KwhData by KwhData.NAME into KwhDataGroup
+                                 select new KwhData
+                                 {
+                                     NAME = KwhDataGroup.Key,
+                                     Min = KwhDataGroup.Min(x => x.Min),
+                                     Max = KwhDataGroup.Max(x => x.Max),
+                                     Total = KwhDataGroup.Sum(x => x.Total)
+                                 }).ToList();
+                    ReportData.AddRange(data1);
+                    foreach (var Systemitem in DeviceSetting.ElectricNames)
                     {
-                        foreach (var Systemitem in DeviceSetting.ElectricNames)
+                        foreach (var DiskBoxesitem in Systemitem.DiskBoxes)
                         {
-                            if (Device[i].Trim() == Systemitem.Name)
+                            foreach (var item in DiskBoxesitem.DeviceName)
                             {
-                                foreach (var DiskBoxesitem in Systemitem.DiskBoxes)
+                                var data = ReportData.SingleOrDefault(g => g.NAME == $"{item.TagName.Trim()}");
+                                if (data != null)
                                 {
-                                    foreach (var item in DiskBoxesitem.DeviceName)
+                                    data.Area = Systemitem.Name;
+                                    data.DiskBox = DiskBoxesitem.Name;
+                                    data.TagNum = item.TagNum;
+                                    if (item.Name != "")
                                     {
-                                        var data = DeviceData.SingleOrDefault(g => g.NAME == $"{item.TagName.Trim()}");
-                                        if (data != null)
-                                        {
-                                            data.Area = Systemitem.Name;
-                                            data.DiskBox = DiskBoxesitem.Name;
-                                            data.TagNum = item.TagNum;
-                                            if (item.Name != "")
-                                            {
-                                                data.NAME = item.Name;
-                                            }
-                                            ReportData.Add(data);
-                                        }
+                                        data.NAME = item.Name;
                                     }
                                 }
-                                break;
                             }
                         }
                     }
+                    ReportData = ReportData.OrderBy(w => w.Area).ToList();
                     for (int i = 0; i < Device.Length; i++)
                     {
                         foreach (var Systemitem in DeviceSetting.ElectricNames)

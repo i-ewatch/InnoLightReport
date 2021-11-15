@@ -16,6 +16,7 @@ namespace SunnineReport.Methods
                     InitialCatalog = setting.InitialCatalog,
                     UserID = setting.UserID,
                     Password = setting.Password
+                    //ConnectTimeout = 0
                 };
             }
         }
