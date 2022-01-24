@@ -102,6 +102,14 @@ namespace SunnineReport
         /// 空調日報表
         /// </summary>
         private SenserDayReportUserControl ASenserDayReportUserControl { get; set; }
+        /// <summary>
+        /// 攪拌機小時報表
+        /// </summary>
+        private SenserHourReportUserControl BSenserHourReportUserControl { get; set; }
+        /// <summary>
+        /// 攪拌機日報表
+        /// </summary>
+        private SenserDayReportUserControl BSenserDayReportUserControl { get; set; }
         #endregion
         public Form1()
         {
@@ -207,6 +215,14 @@ namespace SunnineReport
                 #region 空調日報表
                 ASenserDayReportUserControl = new SenserDayReportUserControl(MssqlMethod, DeviceSetting, 1) { Dock = DockStyle.Fill };
                 NavigationFrame.AddPage(ASenserDayReportUserControl);
+                #endregion
+                #region 攪拌機小時報表
+                BSenserHourReportUserControl = new SenserHourReportUserControl(MssqlMethod, DeviceSetting, 2) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(BSenserHourReportUserControl);
+                #endregion
+                #region 攪拌機日報表
+                BSenserDayReportUserControl = new SenserDayReportUserControl(MssqlMethod, DeviceSetting, 2) { Dock = DockStyle.Fill };
+                NavigationFrame.AddPage(BSenserDayReportUserControl);
                 #endregion
             }
         }

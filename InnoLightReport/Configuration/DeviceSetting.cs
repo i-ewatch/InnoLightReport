@@ -28,6 +28,10 @@ namespace SunnineReport.Configuration
         /// 空調名稱
         /// </summary>
         public List<RTHDiskBox> AirNames { get; set; } = new List<RTHDiskBox>();
+        /// <summary>
+        /// 攪拌機名稱
+        /// </summary>
+        public List<RTHDiskBox> BlenderNames { get; set; } = new List<RTHDiskBox>();
     }
     #region 累積量、平均電流、平均電壓
     /// <summary>

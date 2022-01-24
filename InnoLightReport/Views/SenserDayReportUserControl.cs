@@ -67,19 +67,32 @@ namespace SunnineReport.Views
             #region 設備下拉選單
             if (DeviceSetting != null)
             {
-                if (SenserIndex1 == 0)
+                switch (SenserIndex1)
                 {
-                    foreach (var DisBoxitem in DeviceSetting.SenserNames)
-                    {
-                        DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
-                    }
-                }
-                else
-                {
-                    foreach (var DisBoxitem in DeviceSetting.AirNames)
-                    {
-                        DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
-                    }
+                    case 0:
+                        {
+                            foreach (var DisBoxitem in DeviceSetting.SenserNames)
+                            {
+                                DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
+                            }
+                        }
+                        break;
+                    case 1:
+                        {
+                            foreach (var DisBoxitem in DeviceSetting.AirNames)
+                            {
+                                DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
+                            }
+                        }
+                        break;
+                    case 2:
+                        {
+                            foreach (var DisBoxitem in DeviceSetting.BlenderNames)
+                            {
+                                DevicecheckedComboBoxEdit.Properties.Items.Add(DisBoxitem.Name, false);
+                            }
+                        }
+                        break;
                 }
             }
             #endregion
@@ -107,47 +120,74 @@ namespace SunnineReport.Views
                     $"END ";
                     for (int i = 0; i < Device.Length; i++)
                     {
-                        if (SenserIndex1 == 0)
+                        switch (SenserIndex1)
                         {
-                            foreach (var DisBoxitem in DeviceSetting.SenserNames)
-                            {
-                                if (DisBoxitem.Name == Device[i].Trim())
+                            case 0:
                                 {
-                                    foreach (var item in DisBoxitem.DeviceName)
+                                    foreach (var DisBoxitem in DeviceSetting.SenserNames)
                                     {
-                                        sql = Select_RT(Index, sql, item, StartTime, EndTime);
-                                        //sql = Select_RH(Index, sql, item, StartTime, EndTime);
-                                        Index++;
-                                        SenserStr.Add(item.Name);
-                                        var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
-                                        if (AreaData == null)
+                                        if (DisBoxitem.Name == Device[i].Trim())
                                         {
-                                            AreaStr.Add(DisBoxitem.Name);
+                                            foreach (var item in DisBoxitem.DeviceName)
+                                            {
+                                                sql = Select_RT(Index, sql, item, StartTime, EndTime);
+                                                //sql = Select_RH(Index, sql, item, StartTime, EndTime);
+                                                Index++;
+                                                SenserStr.Add(item.Name);
+                                                var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
+                                                if (AreaData == null)
+                                                {
+                                                    AreaStr.Add(DisBoxitem.Name);
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        }
-                        else
-                        {
-                            foreach (var DisBoxitem in DeviceSetting.AirNames)
-                            {
-                                if (DisBoxitem.Name == Device[i].Trim())
+                                break;
+                            case 1:
                                 {
-                                    foreach (var item in DisBoxitem.DeviceName)
+                                    foreach (var DisBoxitem in DeviceSetting.AirNames)
                                     {
-                                        sql = Select_ART(Index, sql, item, StartTime, EndTime);
-                                        //sql = Select_RH(Index, sql, item, StartTime, EndTime);
-                                        Index++;
-                                        SenserStr.Add(item.Name);
-                                        var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
-                                        if (AreaData == null)
+                                        if (DisBoxitem.Name == Device[i].Trim())
                                         {
-                                            AreaStr.Add(DisBoxitem.Name);
+                                            foreach (var item in DisBoxitem.DeviceName)
+                                            {
+                                                sql = Select_ART(Index, sql, item, StartTime, EndTime);
+                                                //sql = Select_RH(Index, sql, item, StartTime, EndTime);
+                                                Index++;
+                                                SenserStr.Add(item.Name);
+                                                var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
+                                                if (AreaData == null)
+                                                {
+                                                    AreaStr.Add(DisBoxitem.Name);
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                            }
+                                break;
+                            case 2:
+                                {
+                                    foreach (var DisBoxitem in DeviceSetting.BlenderNames)
+                                    {
+                                        if (DisBoxitem.Name == Device[i].Trim())
+                                        {
+                                            foreach (var item in DisBoxitem.DeviceName)
+                                            {
+                                                sql = Select_ART(Index, sql, item, StartTime, EndTime);
+                                                //sql = Select_RH(Index, sql, item, StartTime, EndTime);
+                                                Index++;
+                                                SenserStr.Add(item.Name);
+                                                var AreaData = AreaStr.SingleOrDefault(g => g == DisBoxitem.Name);
+                                                if (AreaData == null)
+                                                {
+                                                    AreaStr.Add(DisBoxitem.Name);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
                         }
                     }
                     sql = SelectFunction(Index, sql);
@@ -243,25 +283,41 @@ namespace SunnineReport.Views
                     SenserIndex = 0;//感測器欄位建置好後歸零，給區域做運算用
                     for (int i = 0; i < AreaStr.Count; i++)
                     {
-                        if (SenserIndex1 == 0)
+                        switch (SenserIndex1)
                         {
-                           var Areadata = DeviceSetting.SenserNames.SingleOrDefault(g => g.Name == AreaStr[i]);
-                            for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
-                            {
-                                AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                                AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
-                                SenserIndex++;
-                            }
-                        }
-                        else
-                        {
-                            var Areadata = DeviceSetting.AirNames.SingleOrDefault(g => g.Name == AreaStr[i]);
-                            for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
-                            {
-                                AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
-                                AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
-                                SenserIndex++;
-                            }
+                            case 0:
+                                {
+                                    var Areadata = DeviceSetting.SenserNames.SingleOrDefault(g => g.Name == AreaStr[i]);
+                                    for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
+                                    {
+                                        AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                                        AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
+                                        SenserIndex++;
+                                    }
+                                }
+                                break;
+                            case 1:
+                                {
+                                    var Areadata = DeviceSetting.AirNames.SingleOrDefault(g => g.Name == AreaStr[i]);
+                                    for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
+                                    {
+                                        AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                                        AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
+                                        SenserIndex++;
+                                    }
+                                }
+                                break;
+                            case 2:
+                                {
+                                    var Areadata = DeviceSetting.BlenderNames.SingleOrDefault(g => g.Name == AreaStr[i]);
+                                    for (int Index = 0; Index < Areadata.DeviceName.Count; Index++)
+                                    {
+                                        AreagridBand[i].AppearanceHeader.TextOptions.HAlignment = HorzAlignment.Center;//文字置中
+                                        AreagridBand[i].Children.Add(SensergridBand[SenserIndex]);
+                                        SenserIndex++;
+                                    }
+                                }
+                                break;
                         }
                     }
                     for (int i = 0; i < SenserStr.Count; i++)

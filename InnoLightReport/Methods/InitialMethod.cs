@@ -182,6 +182,38 @@ namespace SunnineReport.Methods
                                    }
                                }
                             }
+                        },
+                        AirNames =
+                        {
+                            new RTHDiskBox()
+                            {
+                                 Name ="盤箱名稱",
+                               DeviceName =
+                               {
+                                   new RTHDeviceName()
+                                   {
+                                       Name ="空調箱1",
+                                       TTagName ="感測器",
+                                       HTagName = "感測器"
+                                   }
+                               }
+                            }
+                        },
+                        BlenderNames =
+                        {
+                            new RTHDiskBox()
+                            {
+                                 Name ="盤箱名稱",
+                               DeviceName =
+                               {
+                                   new RTHDeviceName()
+                                   {
+                                       Name ="攪拌機1",
+                                       TTagName ="感測器",
+                                       HTagName = "感測器"
+                                   }
+                               }
+                            }
                         }
                     };
                     setting = Setting;
